@@ -1,0 +1,81 @@
+---
+title: "Observations"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+For the [Jellyscape](https://github.com/BigelowLab/jellyscape) project observations are drawn from a recent release of unstaged [ECOMON](https://www.fisheries.noaa.gov/about/northeast-fisheries-science-centern) data. We choose the following groups to belong to the gelatinous "jellyscape" although the list is easily modified.
+
+  + *Siphonophores* (siph)
+  + *Hydromedusea* (hydrom)
+  + *Coelenterates* (coel)
+  + *Ctenophores* (ctenop)
+
+These we can read from the [ecomon package](https://github.com/BigelowLab/ecomon) and aggregate these species into a count per 10m^2 or count per 100m^3. 
+
+# The observation data
+```{r read_ecomon, message=FALSE}
+source("setup.R")
+x = read_ecomon_spp() |>
+  glimpse()
+```
+
+For most analyses here we want the same in long form.
+
+```{r long_form}
+long = ecomon_to_long(x) |>
+  glimpse()
+```
+
+# Distribution through time
+
+```{r plot_timeseries, warning=FALSE}
+ggplot(data = long,
+       mapping = aes(x = date, y = value)) + 
+  geom_point(alpha = 0.1) + 
+  geom_smooth(method = "loess", formula = "y~x") + 
+  scale_y_continuous(trans='log10') + 
+  facet_wrap(~name)
+```
+
+Let's look at coverage by year - note we are counting occurences (absences dropped) which results in the exclusion of `Hydromedusea`.
+
+```{r coverage_by_year, warning=FALSE, message=FALSE}
+long = mutate(long, year = as.numeric(format(date, "%Y")), 
+              month = as.numeric(format(date, "%m")))
+
+ggplot(data = filter(long, value > 0),
+       mapping = aes(year)) +
+  geom_histogram() + 
+  facet_wrap(~name)
+```
+
+And alternative is to look at the observations by month.
+```{r coverage_by_month, warning=FALSE, message=FALSE}
+ggplot(data = filter(long, value > 0),
+       mapping = aes(month)) +
+  geom_histogram(stat = "count") + 
+    scale_x_continuous(breaks = 1:12,
+                       labels = function(x) month.abb[x]) +
+  facet_wrap(~name)
+```
+
+# Distribution through space
+
+We can read the same data in a spatial form and plot that. Once again, we exclude sample locations where there are abscences.
+
+
+```{r as_spatial}
+long = ecomon_as_sf(filter(long, value > 0)) 
+coast = ne_coastline(scale = "medium", returnclass = "sf") |>
+  st_crop(long)
+
+ggplot() +
+  geom_sf(data = long, shape = ".", alpha = 0.3) + 
+  geom_sf(data = coast, color = "orange") +
+  facet_wrap(~name)
+```
+

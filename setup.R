@@ -11,7 +11,8 @@
 #' `cran` packages can be installed with `utils::install.packages()`
 #' `github` packages can be installed with `remotes::install_github()`
 packages = list(
-  cran = c("here", "remotes", "readr", "sf", "stars", "tidymodels", "dplyr"),
+  cran = c("RColorBrewer", "here", "remotes", "tidyr", "readr", "sf", "stars", 
+           "rnaturalearth", "tidymodels", "dplyr"),
   github = c(ecomon = "BigelowLab")
 )
 
