@@ -58,8 +58,8 @@ And alternative is to look at the observations by month.
 ggplot(data = filter(long, value > 0),
        mapping = aes(month)) +
   geom_histogram(stat = "count") + 
-    scale_x_continuous(breaks = 1:12,
-                       labels = function(x) month.abb[x]) +
+  scale_x_continuous(breaks = 1:12,
+                     labels = function(x) substring(month.abb[x],1,1)) +
   facet_wrap(~name)
 ```
 

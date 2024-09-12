@@ -5,7 +5,8 @@ default_groups = function(){
   c("siph" = "Siphonophores",
     "hydrom" = "Hydromedusea",
     "coel" = "Coelenterates",
-    "ctenop" = "Ctenophores")
+    "ctenop" = "Ctenophores",
+    "salps" = "Salps")
 }
 
 #' Convert a vector group names from short names to long names
