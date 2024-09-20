@@ -3,8 +3,8 @@ title: "Testing the Jelly Ocean Hypothesis in the Gulf of Maine"
 author: "Nicholas R. Record, Benjamin Tupper"
 date: 
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 bibliography: bibliography.bib
 ---
 
