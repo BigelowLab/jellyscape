@@ -1,0 +1,61 @@
+---
+title: "Jellycast"
+---
+
+```{r setup, echo = FALSE}
+source("setup.R")
+groups = names(default_groups())
+coast = read_coast()
+```
+
+For the [Jellyscape](https://github.com/BigelowLab/jellyscape) project observations are drawn from a recent release of unstaged [ECOMON](https://www.fisheries.noaa.gov/about/northeast-fisheries-science-centern) data. We choose the following groups to belong to the gelatinous "jellyscape" although the list is easily modified.
+
+  + *Siphonophores* (siph)
+  + *Hydromedusea* (hydrom)
+  + *Coelenterates* (coel)
+  + *Ctenophores* (ctenop)
+  + *Salps* (salps)
+
+These we can read from the [ecomon package](https://github.com/BigelowLab/ecomon) and aggregate these species into a count per unit area (10m^2) or count per unit volume (100m^3). Accepting the defaults for the `read_ecomon_spp()` function yields an aggregated (summed) table for areal abundance for the `r length(groups)` groups listed.
+
+# The Ecomon observation data
+
+Here we show the general distribution of records for the `r length(groups)` groups listed.  Later we show more detailed per-group analyses.
+
+```{r read_ecomon, message=FALSE, echo = FALSE}
+x = read_ecomon_spp(form = 'sf') |>
+  ecomon_to_long() |>
+  dplyr::filter(name == "total_10m2") |>
+  dplyr::mutate(value = value + 1)
+dates = range(x$date)
+plot(x['value'],
+     pch = ".",
+     logz = TRUE,
+     main = "Ecomon Jellyscape Abundance by Area",
+     axes = TRUE,
+     reset = FALSE)
+plot(coast, add = TRUE, col = "black")
+```
+
+To study just the listed groups, we reduce the data set by discarding all non-listed groups and provide an aggregate abundance as shown above.  For the selected groups the data covers `r dates[1]` through `r dates[2]` with `r nrow(x)` records of observation.
+
+
+Over the years the number of observations has decreased (that isn't to say that the effort has decreased.)  The survey effort is concentrated in spring and autumn months.
+
+```{r show_by_date, echo = FALSE}
+x = dplyr::mutate(x,
+                  year = format(date, "%Y") ,
+                  month = factor(format(date, "%b"), levels = month.abb))
+
+ggplot(data = dplyr::group_by(x, year), 
+       mapping = aes(x = year)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+  labs(y = "Record count", title = "Ecomon Jellyscape Records by Year")
+
+ggplot(data = dplyr::group_by(x, month), 
+       mapping = aes(x = month)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+  labs(y = "Record count", title = "Ecomon Jellyscape Records by Month")
+```

@@ -63,7 +63,6 @@ read_ecomon_spp = function(groups = names(default_groups()),
                            agg = TRUE,
                            form = c("table", "sf")[1]){
   
-
   
   x = ecomon::read_ecomon(simplify = FALSE) |>
     dplyr::select(dplyr::any_of(select_vars), dplyr::starts_with(groups)) 

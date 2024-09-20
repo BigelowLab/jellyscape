@@ -13,14 +13,17 @@ For the [Jellyscape](https://github.com/BigelowLab/jellyscape) project observati
   + *Hydromedusea* (hydrom)
   + *Coelenterates* (coel)
   + *Ctenophores* (ctenop)
+  + *Salps* (salps)
 
 These we can read from the [ecomon package](https://github.com/BigelowLab/ecomon) and aggregate these species into a count per 10m^2 or count per 100m^3. 
 
 # The observation data
 ```{r read_ecomon, message=FALSE}
 source("setup.R")
-x = read_ecomon_spp() |>
-  glimpse()
+x = read_ecomon_spp(form = "sf")
+
+
+
 ```
 
 For most analyses here we want the same in long form.
