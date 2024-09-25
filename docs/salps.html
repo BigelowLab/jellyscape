@@ -172,6 +172,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#non-zero-abundances" id="toc-non-zero-abundances" class="nav-link active" data-scroll-target="#non-zero-abundances"><span class="header-section-number">1</span> Non-zero abundances</a></li>
   <li><a href="#zero-abundance-i.e.-absences" id="toc-zero-abundance-i.e.-absences" class="nav-link" data-scroll-target="#zero-abundance-i.e.-absences"><span class="header-section-number">2</span> Zero Abundance (<em>i.e.</em> absences)</a></li>
   <li><a href="#a-closer-look-at-non-zero-abundances" id="toc-a-closer-look-at-non-zero-abundances" class="nav-link" data-scroll-target="#a-closer-look-at-non-zero-abundances"><span class="header-section-number">3</span> A closer look at non-zero abundances</a></li>
+  <li><a href="#a-closer-look-at-the-top-5-abundances" id="toc-a-closer-look-at-the-top-5-abundances" class="nav-link" data-scroll-target="#a-closer-look-at-the-top-5-abundances"><span class="header-section-number">4</span> A closer look at the top 5% abundances</a></li>
   </ul>
 </nav>
     </div>
@@ -328,11 +329,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="a-closer-look-at-non-zero-abundances" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> A closer look at non-zero abundances</h1>
+<p>We can bin the data into abundance quantiles.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>qs <span class="ot">=</span> <span class="fu">quantile</span>(nonz<span class="sc">$</span>value, <span class="fu">seq</span>(<span class="at">from =</span> <span class="fl">0.1</span>, <span class="at">to =</span> <span class="dv">1</span>, <span class="at">by =</span> <span class="fl">0.1</span>))</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>ix <span class="ot">=</span> <span class="fu">findInterval</span>(nonz<span class="sc">$</span>value, qs, <span class="at">all.inside =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>nonz <span class="ot">=</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>(nonz,</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">percentile =</span> <span class="fu">factor</span>(<span class="fu">names</span>(qs)[ix], <span class="at">levels =</span> <span class="fu">names</span>(qs)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>quants <span class="ot">=</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">0</span>, <span class="at">to =</span> <span class="fl">0.95</span>, <span class="at">by =</span> <span class="fl">0.05</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>qs <span class="ot">=</span> <span class="fu">quantile</span>(nonz<span class="sc">$</span>value, quants)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>ix <span class="ot">=</span> <span class="fu">findInterval</span>(nonz<span class="sc">$</span>value, qs)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>nonz <span class="ot">=</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>(nonz,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">quantile =</span> quants[ix],</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">percentile =</span> <span class="fu">factor</span>(<span class="fu">names</span>(qs)[ix], <span class="at">levels =</span> <span class="fu">names</span>(qs)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <details class="code-fold">
@@ -347,6 +351,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div>
 <figure class="figure">
 <p><img src="salps_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="a-closer-look-at-the-top-5-abundances" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> A closer look at the top 5% abundances</h1>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>top5 <span class="ot">=</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(nonz, quantile <span class="sc">&gt;=</span> <span class="fl">0.95</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> top5) <span class="sc">+</span> </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>, <span class="at">size =</span> <span class="fl">0.4</span>) <span class="sc">+</span> </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> coast, </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">color =</span> <span class="st">"orange"</span>) <span class="sc">+</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>month, <span class="at">drop =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="salps_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
