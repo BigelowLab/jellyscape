@@ -89,11 +89,15 @@ ggplot(data = dplyr::group_by(zero, month),
 
 # A closer look at non-zero abundances
 
+We can bin the data into abundance quantiles.
+
 ```{r}
 #| code-fold: false
-qs = quantile(nonz$value, seq(from = 0.1, to = 1, by = 0.1))
-ix = findInterval(nonz$value, qs, all.inside = TRUE)
+quants = seq(from = 0, to = 0.95, by = 0.05)
+qs = quantile(nonz$value, quants)
+ix = findInterval(nonz$value, qs)
 nonz = dplyr::mutate(nonz,
+                     quantile = quants[ix],
                      percentile = factor(names(qs)[ix], levels = names(qs)))
 ```
 
@@ -105,3 +109,16 @@ ggplot(data = nonz) +
           color = "orange") +
   facet_wrap(~percentile)
 ```
+
+# A closer look at the top 5% abundances
+
+```{r}
+top5 = dplyr::filter(nonz, quantile >= 0.95)
+
+ggplot(data = top5) + 
+  geom_sf(alpha = 0.1, size = 0.4) + 
+  geom_sf(data = coast, 
+          color = "orange") +
+  facet_wrap(~month, drop = FALSE)
+```
+
