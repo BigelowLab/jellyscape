@@ -1,0 +1,107 @@
+---
+title: "Salpsae"
+format:
+  html:
+    code-fold: true
+---
+
+```{r setup, echo = FALSE}
+source("setup.R")
+groups = names(default_groups())
+coast = read_coast()
+```
+
+```{r read_ecomon, message=FALSE}
+#| code-fold: false
+thisgroup = "Salps"
+x = read_ecomon_spp(form = 'sf', groups = thisgroup, agg = FALSE) |>
+  ecomon_to_long() |>
+  dplyr::mutate(year = format(date, "%Y") ,
+                month = factor(format(date, "%b"), levels = month.abb))
+nonz = dplyr::filter(x, value > 0)
+zero = dplyr::filter(x, value <= 0)
+n = nrow(x)
+nz = zero |> nrow()
+coast = sf::st_crop(coast, x)
+```
+
+There are `r n` records for `salps` of which `r nz` are zeroes (about `r sprintf("%0.2f%%", nz/n*100)`) leaving `r n-nz` non-zero salp abundance records.
+
+# Non-zero abundances
+
+Here's an abudnance scaled plot of the non-zero abundances.
+```{r}
+plot(nonz['value'],
+     pch = ".",
+     logz = TRUE,
+     main = glue::glue("Non-zero abundance of {thisgroup}"),
+     axes = TRUE,
+     reset = FALSE)
+plot(coast, add = TRUE, col = "black")
+```
+
+
+```{r, warning=FALSE}
+ggplot(data = dplyr::group_by(nonz, year), 
+       mapping = aes(x = year)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+  labs(y = "Record count", title = glue::glue("Non-zero abundance {thisgroup} Records by Year"))
+
+ggplot(data = dplyr::group_by(nonz, month), 
+       mapping = aes(x = month)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+  labs(y = "Record count", title = glue::glue("Non-zero abundance {thisgroup} Records by Month"))
+```
+
+
+
+# Zero Abundance (*i.e.* absences)
+
+The distribution of zero abundance records is much more extensive.
+
+```{r}
+plot(zero['value'] |>
+       dplyr::filter(value <= 0) |>
+       sf::st_geometry(),
+     pch = ".",
+     main = glue::glue("Zero abundance presences {thisgroup}"),
+     axes = TRUE,
+     reset = FALSE)
+plot(coast, add = TRUE, col = "black")
+```
+
+```{r, warning=FALSE}
+ggplot(data = dplyr::group_by(zero, year), 
+       mapping = aes(x = year)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+  labs(y = "Record count", title = glue::glue("Zero abundance {thisgroup} Records by Year"))
+
+ggplot(data = dplyr::group_by(zero, month), 
+       mapping = aes(x = month)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+  labs(y = "Record count", title = glue::glue("Zero abudnance {thisgroup} Records by Month"))
+```
+
+
+# A closer look at non-zero abundances
+
+```{r}
+#| code-fold: false
+qs = quantile(nonz$value, seq(from = 0.1, to = 1, by = 0.1))
+ix = findInterval(nonz$value, qs, all.inside = TRUE)
+nonz = dplyr::mutate(nonz,
+                     percentile = factor(names(qs)[ix], levels = names(qs)))
+```
+
+
+```{r}
+ggplot(data = nonz) + 
+  geom_sf(alpha = 0.1, size = 0.3) + 
+  geom_sf(data = coast, 
+          color = "orange") +
+  facet_wrap(~percentile)
+```

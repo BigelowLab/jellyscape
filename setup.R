@@ -12,7 +12,7 @@
 #' `github` packages can be installed with `remotes::install_github()`
 packages = list(
   cran = c("RColorBrewer", "here", "remotes", "tidyr", "readr", "sf", "stars", 
-           "rnaturalearth", "tidymodels", "dplyr"),
+           "glue", "rnaturalearth", "tidymodels", "dplyr"),
   github = c(ecomon = "BigelowLab")
 )
 

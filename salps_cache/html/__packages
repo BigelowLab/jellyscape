@@ -6,6 +6,7 @@ readr
 sf
 abind
 stars
+glue
 rnaturalearth
 tidymodels
 broom
@@ -25,4 +26,3 @@ workflows
 workflowsets
 yardstick
 ecomon
-glue
