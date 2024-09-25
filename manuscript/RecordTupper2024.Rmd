@@ -1,0 +1,23 @@
+---
+title: "Testing the Jelly Ocean Hypothesis in the Gulf of Maine"
+author: "Nicholas R. Record, Benjamin Tupper"
+date: 
+output:
+  html_document: default
+  pdf_document: default
+bibliography: bibliography.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Introduction
+
+[This is from an old manuscript draft... will update] For the past century, a “crustaceocentric” view has dominated zooplankton ecology in the ocean (Haddock 2004). The study of gelatinous species, collectively termed gelata, has been comparatively underemphasized. Recently, gelata have reentered the spotlight, following conspicuous blooms that have damaged fisheries (Kideys et al. 2005), aquaculture (ref), energy production (Seshadri et al. 2000), and recreation (ref). In addition to motivating new research on gelata, these recent events have raised the question of whether gelata have an increasing presence in a changing ocean.
+
+The Jelly Ocean Hypothesis posits that gelatinous zooplankton populations are increasing worldwide as a result of changing ocean conditions, primarily due to anthropogenic activities. A series of recent studies have argued that, due a multiplicity of causes, abundance of gelatinous species is growing. Proposed causes are primarily human-driven, including warming (ref), eutrophication, translocation (Kideys et al. 2005), overfishing, bottom trawling (Qui 2014), pollution, aquaculture, and acidification (Richardson & Gibbons 2008). There is also evidence that shifts toward dominance of gelata are difficult to reverse (Richardson et al. 2009). Testing the Jelly Ocean Hypothesis requires long time series (>20 years) of gelata abundances in order to compare to historical levels. The shortage of such datasets has left the Jelly Ocean Hypothesis largely unsupported (Condon et al. 2012). In lieu of time series, studies have used qualitative data such as news reports to demonstrate that gelata are increasing globally (Brotz 2011, Brotz et al. 2012). However, it is difficult to distinguish these perceived increases from annual or decadal fluctuations. A recent meta-analysis of time series showed that most perceived increases actually reflect a ~20 year cyclicity, with a worldwide upswing in the 1990s, coinciding with the increase in concern over gelata (Condon et al. 2013), although some notable long-term increases in gelata were not included in the analysis (e.g. Atkinson et al. 2004). The Jelly Ocean Hypothesis remains very much in debate (Sanz-Martín et al. 2016).
+
+Gelata are taxonomically very diverse, encompassing many phyla. This diversity confounds attempts to quantify increasing trends. The list of  species classified under the gelatinous umbrella varies, and includes taxa with drastic and important differences in their life histories, trophic positions, and ecological roles. For example, pelagic ctenophores are primarily copepod predators, where as pelagic tunicates graze some of the smallest microbes. Cnidarians and ctenophores are the two most common taxa to group together in analysis, and yet they are phylogenetically very distant (Moroz et al. 2014). Perhaps the only characteristic common to the many gelatinous phyla is a body with a high water content, alternatively expressed as a low carbon:volume ratio. There is no a priori reason to expect that phyla with such striking differences and perhaps only a superficial similarity should be grouped together with respect to their temporal trends. Some have suggested that the Jelly Ocean Hypothesis is ill-posed—i.e. which species are increasing, where, and for what reason (Gibbons & Richardson 2013)?
+
+Despite their major differences, there is some evidence that a diverse collection of gelata can vary together (Condon et al. 2013). This suggests that certain conditions can occur that favor the gelatinous body form in general, over other strategies that utilize a high carbon:volume ratio (e.g. crustaceans). This reframes the Jelly Ocean Hypothesis in trait-based terms: conditions in the ocean ecosystem can shift to benefit the gelatinous body form. This would be inclusive of gelata in general, despite differences in phylogeny, trophic position, or other life history traits. Herein we test the idea that conditions can favor the gelatinous body plan in general, rather than the idea that a particular group is increasing in recent years. We focus on the Gulf of Maine, where we have three independent time series with sampling methodologies, quantifying abundances of 18 gelatinous taxa from five phyla, and overlapping for a time period of >40 years. 
