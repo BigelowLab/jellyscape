@@ -6,6 +6,7 @@ project:
     - index.qmd
     - 01_presences.qmd
     - 02_salps.qmd
+    - 03_coel.qmd
     - "!manuscript/"
     - "!*.Rmd"
 execute: 
@@ -25,6 +26,8 @@ website:
         text: Presence of species
       - href: 02_salps.qmd
         text: Salps
+      - href: 03_coel.qmd
+        text: Coelenterates
       - href: about.qmd
         text: About
 tools:
