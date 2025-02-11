@@ -1,0 +1,126 @@
+---
+title: "Coelenterates (coel)"
+format:
+  html:
+    code-fold: true
+---
+
+<a title="Steve Jurvetson from Menlo Park, USA, CC BY 2.0 &lt;https://creativecommons.org/licenses/by/2.0&gt;, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Comb_jellies-mba.jpg"><img width="128" alt="Comb jellies-mba" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Comb_jellies-mba.jpg/128px-Comb_jellies-mba.jpg?20060328193812"></a>
+
+```{r setup, echo = FALSE, message = FALSE}
+source("setup.R")
+groups = names(default_groups())
+coast = read_coast()
+```
+
+```{r read_ecomon, message=FALSE}
+#| code-fold: false
+thisgroup = "Coel"
+x = read_ecomon_spp(form = 'sf', groups = thisgroup, agg = FALSE) |>
+  ecomon_to_long() |>
+  dplyr::mutate(year = format(date, "%Y") ,
+                month = factor(format(date, "%b"), levels = month.abb))
+nonz = dplyr::filter(x, value > 0)
+zero = dplyr::filter(x, value <= 0)
+n = nrow(x)
+nz = zero |> nrow()
+coast = sf::st_crop(coast, x)
+```
+
+There are `r n` records for `r thisgroup` of which `r nz` are zeroes (about `r sprintf("%0.2f%%", nz/n*100)`) leaving `r n-nz` non-zero salp abundance records.
+
+# Non-zero abundances
+
+Here's an abundance scaled plot of the non-zero abundances.
+```{r}
+plot(nonz['value'],
+     pch = ".",
+     logz = TRUE,
+     main = glue::glue("Non-zero abundance of {thisgroup}"),
+     axes = TRUE,
+     reset = FALSE)
+plot(coast, add = TRUE, col = "black")
+```
+
+
+```{r, warning=FALSE}
+ggplot(data = dplyr::group_by(nonz, year), 
+       mapping = aes(x = year)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+  labs(y = "Record count", title = glue::glue("Non-zero abundance {thisgroup} Records by Year"))
+
+ggplot(data = dplyr::group_by(nonz, month), 
+       mapping = aes(x = month)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+  labs(y = "Record count", title = glue::glue("Non-zero abundance {thisgroup} Records by Month"))
+```
+
+
+
+# Zero Abundance (*i.e.* absences)
+
+The distribution of zero abundance records is much more extensive.
+
+```{r}
+plot(zero['value'] |>
+       dplyr::filter(value <= 0) |>
+       sf::st_geometry(),
+     pch = ".",
+     main = glue::glue("Zero abundance presences {thisgroup}"),
+     axes = TRUE,
+     reset = FALSE)
+plot(coast, add = TRUE, col = "black")
+```
+
+```{r, warning=FALSE}
+ggplot(data = dplyr::group_by(zero, year), 
+       mapping = aes(x = year)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+  labs(y = "Record count", title = glue::glue("Zero abundance {thisgroup} Records by Year"))
+
+ggplot(data = dplyr::group_by(zero, month), 
+       mapping = aes(x = month)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+  labs(y = "Record count", title = glue::glue("Zero abundance {thisgroup} Records by Month"))
+```
+
+
+# A closer look at non-zero abundances
+
+We can bin the data into abundance quantiles.
+
+```{r}
+#| code-fold: false
+quants = seq(from = 0, to = 0.95, by = 0.05)
+qs = quantile(nonz$value, quants)
+ix = findInterval(nonz$value, qs)
+nonz = dplyr::mutate(nonz,
+                     quantile = quants[ix],
+                     percentile = factor(names(qs)[ix], levels = names(qs)))
+```
+
+
+```{r}
+ggplot(data = nonz) + 
+  geom_sf(alpha = 0.1, size = 0.3) + 
+  geom_sf(data = coast, 
+          color = "orange") +
+  facet_wrap(~percentile)
+```
+
+# A closer look at the top 5% abundances
+
+```{r}
+top5 = dplyr::filter(nonz, quantile >= 0.95)
+
+ggplot(data = top5) + 
+  geom_sf(alpha = 0.1, size = 0.4) + 
+  geom_sf(data = coast, 
+          color = "orange") +
+  facet_wrap(~month, drop = FALSE)
+```
+

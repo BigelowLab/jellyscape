@@ -71,7 +71,7 @@ ggplot(data = filter(long, value > 0),
 We can read the same data in a spatial form and plot that. Once again, we exclude sample locations where there are absences.
 
 
-```{r as_spatial}
+```{r as_spatial, warning = FALSE, message=FALSE}
 long = ecomon_as_sf(filter(long, value > 0)) 
 coast = ne_coastline(scale = "medium", returnclass = "sf") |>
   st_crop(long)
