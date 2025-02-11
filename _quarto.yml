@@ -8,7 +8,7 @@ project:
     - 02_salps.qmd
     - 03_coel.qmd
     - 04_siph.qmd
-    - 05_centop.qm
+    - 05_ctenop.qm
     - "!manuscript/"
     - "!*.Rmd"
 execute: 
@@ -32,7 +32,7 @@ website:
         text: Coelenterates
       - href: 04_siph.qmd
         text: Siphonophores
-      - href: 05_centop.qmd
+      - href: 05_ctenop.qmd
         text: Ctenophores
       - href: about.qmd
         text: About
