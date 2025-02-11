@@ -1,7 +1,10 @@
 ---
-title: "Observations"
-output: github_document
+title: "Presences of species"
+format:
+  html:
+    code-fold: true
 ---
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -65,7 +68,7 @@ ggplot(data = filter(long, value > 0),
 
 # Distribution through space
 
-We can read the same data in a spatial form and plot that. Once again, we exclude sample locations where there are abscences.
+We can read the same data in a spatial form and plot that. Once again, we exclude sample locations where there are absences.
 
 
 ```{r as_spatial}

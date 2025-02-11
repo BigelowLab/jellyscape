@@ -1,11 +1,11 @@
 ---
-title: "Salpsae"
+title: "Salps"
 format:
   html:
     code-fold: true
 ---
 
-```{r setup, echo = FALSE}
+```{r setup, echo = FALSE, message = FALSE}
 source("setup.R")
 groups = names(default_groups())
 coast = read_coast()
@@ -29,7 +29,7 @@ There are `r n` records for `salps` of which `r nz` are zeroes (about `r sprintf
 
 # Non-zero abundances
 
-Here's an abudnance scaled plot of the non-zero abundances.
+Here's an abundance scaled plot of the non-zero abundances.
 ```{r}
 plot(nonz['value'],
      pch = ".",
@@ -83,7 +83,7 @@ ggplot(data = dplyr::group_by(zero, month),
        mapping = aes(x = month)) +
   geom_bar() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
-  labs(y = "Record count", title = glue::glue("Zero abudnance {thisgroup} Records by Month"))
+  labs(y = "Record count", title = glue::glue("Zero abundance {thisgroup} Records by Month"))
 ```
 
 

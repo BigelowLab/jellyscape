@@ -3,7 +3,9 @@ project:
   output-dir: docs
   execute-dir: project
   render:
-    - "*.qmd"
+    - index.qmd
+    - 01_presences.qmd
+    - 02_salps.qmd
     - "!manuscript/"
     - "!*.Rmd"
 execute: 
@@ -12,20 +14,24 @@ website:
   title: "Jellyscape"
   page-navigation: true
   back-to-top-navigation: true
-  page-footer: "Copyright 2024, Bigelow Laboratory for Ocean Science" 
+  page-footer: "Copyright 2025, Bigelow Laboratory for Ocean Science" 
   sidebar:
     style: "docked"
     search: true
     contents:
       - href: index.qmd
         text: Home
-      - href: salps.qmd
-        text: Salpsae
+      - href: 01_presences.qmd
+        text: Presence of species
+      - href: 02_salps.qmd
+        text: Salps
       - href: about.qmd
         text: About
 tools:
    - icon: github
      menu:
+       - text: Tandy Center
+         url:  https://www.bigelow.org/services/ocean-forecasting/
        - text: Source Code
          url:  https://github.com/BigelowLab/jellyscape
        - text: Report a bug or ask a question

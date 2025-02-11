@@ -1,0 +1,5 @@
+---
+title: "About"
+---
+
+The [jellyscape](https://github.com/BigelowLab/jellyscape) project was developed at [Bigelow Laboratory's Tandy Center for Ocean Forecasting](https://www.bigelow.org/services/ocean-forecasting/) to aid in the development of modeling studies requiring either observation/abundance point data or to modeled rasterized layers for subsequent use in modeling studies. Use the [github issues tracker](https://github.com/BigelowLab/jellyscape/issues) to post questions or report issues.
