@@ -64,7 +64,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./about.qmd" rel="next">
+<link href="./04_siph.html" rel="next">
 <link href="./02_salps.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -167,6 +167,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./04_siph.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Siphonophores</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./about.qmd" class="sidebar-item-text sidebar-link">
  <span class="menu-text">About</span></a>
   </div>
@@ -212,18 +218,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p><a title="Steve Jurvetson from Menlo Park, USA, CC BY 2.0 <https://creativecommons.org/licenses/by/2.0>, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Comb_jellies-mba.jpg"><img width="128" alt="Comb jellies-mba" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Comb_jellies-mba.jpg/128px-Comb_jellies-mba.jpg?20060328193812"></a></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>thisgroup <span class="ot">=</span> <span class="st">"Coel"</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">read_ecomon_spp</span>(<span class="at">form =</span> <span class="st">'sf'</span>, <span class="at">groups =</span> thisgroup, <span class="at">agg =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ecomon_to_long</span>() <span class="sc">|&gt;</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">format</span>(date, <span class="st">"%Y"</span>) ,</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">month =</span> <span class="fu">factor</span>(<span class="fu">format</span>(date, <span class="st">"%b"</span>), <span class="at">levels =</span> month.abb))</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>nonz <span class="ot">=</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(x, value <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>zero <span class="ot">=</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(x, value <span class="sc">&lt;=</span> <span class="dv">0</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="fu">nrow</span>(x)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>nz <span class="ot">=</span> zero <span class="sc">|&gt;</span> <span class="fu">nrow</span>()</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>coast <span class="ot">=</span> sf<span class="sc">::</span><span class="fu">st_crop</span>(coast, x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>thisgroup <span class="ot">=</span> <span class="st">"Coelenterates"</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>nickname <span class="ot">=</span> <span class="st">"coel"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">read_ecomon_spp</span>(<span class="at">form =</span> <span class="st">'sf'</span>, <span class="at">groups =</span> nickname, <span class="at">agg =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ecomon_to_long</span>() <span class="sc">|&gt;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">format</span>(date, <span class="st">"%Y"</span>) ,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">month =</span> <span class="fu">factor</span>(<span class="fu">format</span>(date, <span class="st">"%b"</span>), <span class="at">levels =</span> month.abb))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>nonz <span class="ot">=</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(x, value <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>zero <span class="ot">=</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(x, value <span class="sc">&lt;=</span> <span class="dv">0</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="fu">nrow</span>(x)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>nz <span class="ot">=</span> zero <span class="sc">|&gt;</span> <span class="fu">nrow</span>()</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>coast <span class="ot">=</span> sf<span class="sc">::</span><span class="fu">st_crop</span>(coast, x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>There are 32693 records for Coel of which 22435 are zeroes (about 68.62%) leaving 10258 non-zero salp abundance records.</p>
+<p>There are 32693 records for Coelenterates of which 22435 are zeroes (about 68.62%) leaving 10258 non-zero salp abundance records.</p>
 <section id="non-zero-abundances" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Non-zero abundances</h1>
 <p>Here’s an abundance scaled plot of the non-zero abundances.</p>
@@ -817,8 +824,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./about.qmd" class="pagination-link" aria-label="About">
-        <span class="nav-page-text">About</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./04_siph.html" class="pagination-link" aria-label="Siphonophores">
+        <span class="nav-page-text">Siphonophores</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

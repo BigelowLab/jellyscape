@@ -1,11 +1,11 @@
 ---
-title: "Coelenterates (coel)"
+title: "Siphonophores (siph)"
 format:
   html:
     code-fold: true
 ---
 
-<a title="Steve Jurvetson from Menlo Park, USA, CC BY 2.0 &lt;https://creativecommons.org/licenses/by/2.0&gt;, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Comb_jellies-mba.jpg"><img width="128" alt="Comb jellies-mba" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Comb_jellies-mba.jpg/128px-Comb_jellies-mba.jpg?20060328193812"></a>
+<a title="Catriona Munro, Stefan Siebert, Felipe Zapata, Mark Howison, Alejandro Damian-Serrano, Samuel H. Church, Freya E.Goetz, Philip R. Pugh, Steven H.D.Haddock, Casey W.Dunn, CC BY 4.0 &lt;https://creativecommons.org/licenses/by/4.0&gt;, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Photographs_of_living_siphonophores.jpg"><img width="128" alt="Photographs of living siphonophores" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Photographs_of_living_siphonophores.jpg/128px-Photographs_of_living_siphonophores.jpg?20200320180132"></a>
 
 ```{r setup, echo = FALSE, message = FALSE}
 source("setup.R")
@@ -15,8 +15,8 @@ coast = read_coast()
 
 ```{r read_ecomon, message=FALSE}
 #| code-fold: false
-thisgroup = "Coelenterates"
-nickname = "coel"
+thisgroup = "Siphonophores"
+nickname = "siph"
 x = read_ecomon_spp(form = 'sf', groups = nickname, agg = FALSE) |>
   ecomon_to_long() |>
   dplyr::mutate(year = format(date, "%Y") ,

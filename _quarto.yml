@@ -7,6 +7,7 @@ project:
     - 01_presences.qmd
     - 02_salps.qmd
     - 03_coel.qmd
+    - 04_siph.qmd
     - "!manuscript/"
     - "!*.Rmd"
 execute: 
@@ -28,6 +29,8 @@ website:
         text: Salps
       - href: 03_coel.qmd
         text: Coelenterates
+      - href: 04_siph.qmd
+        text: Siphonophores
       - href: about.qmd
         text: About
 tools:
