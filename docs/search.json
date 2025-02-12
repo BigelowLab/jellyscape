@@ -58,5 +58,15 @@
     "crumbs": [
       "Siphonophores"
     ]
+  },
+  {
+    "objectID": "06_hydrom.html",
+    "href": "06_hydrom.html",
+    "title": "Hydromedusea (hydrom)",
+    "section": "",
+    "text": "thisgroup = \"Hydromedusea\"\nnickname = \"hydrom\"\nx = read_ecomon_spp(form = 'sf', groups = nickname, agg = FALSE) |&gt;\n  ecomon_to_long() |&gt;\n  dplyr::mutate(year = format(date, \"%Y\") ,\n                month = factor(format(date, \"%b\"), levels = month.abb))\nnonz = dplyr::filter(x, value &gt; 0)\nzero = dplyr::filter(x, value &lt;= 0)\nn = nrow(x)\nnz = zero |&gt; nrow()\ncoast = sf::st_crop(coast, x)\n\nThere are 32693 records for Hydromedusea of which 29066 are zeroes (about 88.91%) leaving 3627 non-zero salp abundance records.\n\n\n\n Back to top",
+    "crumbs": [
+      "Hydromedusea"
+    ]
   }
 ]

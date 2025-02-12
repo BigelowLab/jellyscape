@@ -9,6 +9,7 @@ project:
     - 03_coel.qmd
     - 04_siph.qmd
     - 05_ctenop.qmd
+    - 06_hydrom.qmd
     - "!manuscript/"
     - "!*.Rmd"
 execute: 
@@ -34,6 +35,8 @@ website:
         text: Siphonophores
       - href: 05_ctenop.qmd
         text: Ctenophores
+      - href: 06_hydrom.qmd
+        text: Hydromedusea
       - href: about.qmd
         text: About
 tools:
