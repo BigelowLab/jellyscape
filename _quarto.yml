@@ -8,7 +8,7 @@ project:
     - 02_salps.qmd
     - 03_coel.qmd
     - 04_siph.qmd
-    - 05_ctenop.qm
+    - 05_ctenop.qmd
     - "!manuscript/"
     - "!*.Rmd"
 execute: 
