@@ -1,7 +1,10 @@
-#' Retrieve the default groups included in observations set
-#' 
-#' @return chr named vector of one or more species groups
+
 default_groups = function(){
+  
+  #' Retrieve the default groups included in observations set
+  #' 
+  #' @return chr named vector of one or more species groups
+  
   c("siph" = "Siphonophores",
     "hydrom" = "Hydromedusea",
     "coel" = "Coelenterates",
@@ -9,13 +12,15 @@ default_groups = function(){
     "salps" = "Salps")
 }
 
-#' Convert a vector group names from short names to long names
-#' 
-#' @param x chr vector of shortnames
-#' @param lut chr names vector translating long and short names
-#' @param a vector of long names, unmatched short names are returned as is
+
 as_longname = function(x = paste0(names(default_groups), "_10m2"),
                        lut = default_groups()){
+  
+  #' Convert a vector group names from short names to long names
+  #' 
+  #' @param x chr vector of shortnames
+  #' @param lut chr names vector translating long and short names
+  #' @param a vector of long names, unmatched short names are returned as is
   
   y = x
   for (short in names(lut)){
@@ -26,10 +31,13 @@ as_longname = function(x = paste0(names(default_groups), "_10m2"),
 }
 
 
-#' Retrieve the default variables to extract
-#' 
-#' @return chr, the columns names to extract when reading ecomon data
+
 default_vars = function(){
+  
+  #' Retrieve the default variables to extract
+  #' 
+  #' @return chr, the columns names to extract when reading ecomon data
+  
   c("cruise_name" = "Cruise", 
     "station" = "Station", 
     "zoo_gear" = "Zooplankton gear", 
@@ -49,21 +57,22 @@ default_vars = function(){
 
 
 
-#' Read ecomon data for favored species (groups)
-#' 
-#' @param groups chr, one or more "species" or group names
-#' @param per chr, one of "area" or "volume" to select by those metrics, or "any"
-#' @param select_vars chr, the names of the core columns to extract with the groupings
-#' @param agg logical, if TRUE and \code{per} is not "any" then sum the metrics
-#' @param form chr, one of "table" or "sf"
-#' @return table or sf table
+
 read_ecomon_spp = function(groups = names(default_groups()),
                            per = c("any", "area", "volume")[2],
                            select_vars = names(default_vars()),
                            agg = TRUE,
                            form = c("table", "sf")[1]){
   
-  
+  #' Read ecomon data for favored species (groups)
+  #' 
+  #' @param groups chr, one or more "species" or group names
+  #' @param per chr, one of "area" or "volume" to select by those metrics, or "any"
+  #' @param select_vars chr, the names of the core columns to extract with the groupings
+  #' @param agg logical, if TRUE and \code{per} is not "any" then sum the metrics
+  #' @param form chr, one of "table" or "sf"
+  #' @return table or sf table
+  #' 
   x = ecomon::read_ecomon(simplify = FALSE) |>
     dplyr::select(dplyr::any_of(select_vars), dplyr::starts_with(groups)) 
   
@@ -92,20 +101,26 @@ read_ecomon_spp = function(groups = names(default_groups()),
   x
 }
 
-#' Convert to sf
-#' 
-#' @param x table 
-#' @return sf table
+
 ecomon_as_sf = function(x = read_ecomon_spp()){
+  
+  #' Convert to sf
+  #' 
+  #' @param x table 
+  #' @return sf table
+  
   if (inherits(x, "sfc")) return(x)
   sf::st_as_sf(x, coords = c("lon", "lat"), crs = 4326)
 }
 
-#' Pivot an ecomon table to long form
-#' 
-#' @param x ecomon table with either areal or volume densities
-#' @return a table pivoted to long shape
+
 ecomon_to_long = function(x = read_ecomon_spp( form = "table")){
+  
+  #' Pivot an ecomon table to long form
+  #' 
+  #' @param x ecomon table with either areal or volume densities
+  #' @return a table pivoted to long shape
+  
   ia = grepl("_10m2", colnames(x), fixed = TRUE)
   iv = grepl("_100m3", colnames(x), fixed = TRUE)
   if (any(ia) && any(iv)) stop("please provide just areal or volume densities, not both")

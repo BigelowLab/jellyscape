@@ -12,7 +12,7 @@
 #' `github` packages can be installed with `remotes::install_github()`
 packages = list(
   cran = c("RColorBrewer", "here", "remotes", "tidyr", "readr", "sf", "stars", 
-           "glue", "rnaturalearth", "tidymodels", "dplyr"),
+           "glue", "rnaturalearth", "tidymodels", "dplyr", "docstring"),
   github = c(ecomon = "BigelowLab")
 )
 
@@ -42,3 +42,4 @@ here::i_am("setup.R")
 # source ancillary functions
 files = list.files("functions", pattern = "^.*\\.R$", full.names = TRUE)
 for (file in files) source(file)
+
