@@ -10,6 +10,7 @@ project:
     - 04_siph.qmd
     - 05_ctenop.qmd
     - 06_hydrom.qmd
+    - 07_changes.qmd
     - "!manuscript/"
     - "!*.Rmd"
 execute: 
@@ -37,6 +38,8 @@ website:
         text: Ctenophores
       - href: 06_hydrom.qmd
         text: Hydromedusea
+      - href: 07_changes.qmd
+        text: Changes over time
       - href: about.qmd
         text: About
 tools:

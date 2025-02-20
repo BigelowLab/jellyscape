@@ -1,0 +1,30 @@
+---
+title: "07_changes"
+format:
+  html:
+    code-fold: true
+---
+
+
+Here we look a changes over time for individual species as well as for the aggregate.  We bin abundance into a hexagonal mesh covering the area, compute long term means and the examine trends over time relative to each mean. 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+source("setup.R")
+```
+
+
+```{r load_data}
+x = read_ecomon_spp(form = 'sf') |> ecomon_to_long()
+h = read_hexgrid()
+```
+
+# Total
+
+```{r total_abundance}
+abund = tally_abundance(x, h, fun = sum, na.rm = TRUE, transform = log1p)
+plot(abund)
+```
+  
+  
+    

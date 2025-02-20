@@ -68,5 +68,15 @@
     "crumbs": [
       "Hydromedusea"
     ]
+  },
+  {
+    "objectID": "07_changes.html",
+    "href": "07_changes.html",
+    "title": "07_changes",
+    "section": "",
+    "text": "Here we look a changes over time for individual species as well as for the aggregate. We bin abundance into a hexagonal mesh covering the area, compute long term means and the examine trends over time relative to each mean.\n\n\nCode\nx = read_ecomon_spp(form = 'sf') |&gt; ecomon_to_long()\nh = read_hexgrid()\n\n\n\n1 Total\n\n\nCode\nabund = tally_abundance(x, h, fun = sum, na.rm = TRUE, transform = log1p)\nplot(abund)\n\n\n\n\n\n\n\n\n\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Changes over time"
+    ]
   }
 ]
