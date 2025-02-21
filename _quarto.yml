@@ -14,7 +14,7 @@ project:
     - "!manuscript/"
     - "!*.Rmd"
 execute: 
-  cache: true
+  cache: false
 website:
   title: "Jellyscape"
   page-navigation: true

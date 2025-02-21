@@ -205,7 +205,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#total" id="toc-total" class="nav-link active" data-scroll-target="#total"><span class="header-section-number">1</span> Total</a></li>
+  <li><a href="#summaries-across-all-time" id="toc-summaries-across-all-time" class="nav-link active" data-scroll-target="#summaries-across-all-time"><span class="header-section-number">1</span> Summaries across all time</a></li>
   </ul>
 </nav>
     </div>
@@ -231,26 +231,56 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Here we look a changes over time for individual species as well as for the aggregate. We bin abundance into a hexagonal mesh covering the area, compute long term means and the examine trends over time relative to each mean.</p>
+<p>Here we look a changes over time for individual species as well as for the aggregate. We bin abundance into a hexagonal mesh covering the area, compute long term means and the examine trends over time relative to each long-term mean.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">read_ecomon_spp</span>(<span class="at">form =</span> <span class="st">'sf'</span>) <span class="sc">|&gt;</span> <span class="fu">ecomon_to_long</span>()</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>h <span class="ot">=</span> <span class="fu">read_hexgrid</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<section id="total" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Total</h1>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>abund <span class="ot">=</span> <span class="fu">tally_abundance</span>(x, h, <span class="at">fun =</span> sum, <span class="at">na.rm =</span> <span class="cn">TRUE</span>, <span class="at">transform =</span> log1p)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(abund)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>h <span class="ot">=</span> <span class="fu">read_hexgrid</span>()</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>coast <span class="ot">=</span> <span class="fu">read_coast</span>()</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sf<span class="sc">::</span><span class="fu">st_geometry</span>(x), <span class="at">pch =</span> <span class="st">"."</span>, <span class="at">axes =</span> <span class="cn">TRUE</span>, <span class="at">reset =</span> <span class="cn">FALSE</span>, <span class="at">main =</span> <span class="st">"All records"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sf<span class="sc">::</span><span class="fu">st_geometry</span>(h), <span class="at">border =</span> <span class="st">"gray"</span>, <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(coast, <span class="at">col =</span> <span class="st">"orange"</span>, <span class="at">add =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="07_changes_files/figure-html/total_abundance-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="07_changes_files/figure-html/load_data-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="summaries-across-all-time" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Summaries across all time</h1>
+<p>Here we create long term total and mean per hexagon</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>totabund <span class="ot">=</span> <span class="fu">tally_abundance</span>(x, h, <span class="at">fun =</span> sum, <span class="at">na.rm =</span> <span class="cn">TRUE</span>, <span class="at">shape =</span> <span class="st">"long"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_abundance</span>(<span class="at">name =</span> <span class="st">"all_total_abund_hex"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>meanabund <span class="ot">=</span> <span class="fu">tally_abundance</span>(x, h, <span class="at">fun =</span> mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>, <span class="at">shape =</span> <span class="st">"long"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">write_abundance</span>(<span class="at">name =</span> <span class="st">"all_mean_abund_hex"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>We’ll read back in the mean abundance in wide format, and plot that.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>meanabund <span class="ot">=</span> meanabund <span class="sc">|&gt;</span> <span class="fu">wider_abundance</span>()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>nbreaks <span class="ot">=</span> <span class="dv">10</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(meanabund,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">nbreaks =</span> nbreaks,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">pal =</span> RColorBrewer<span class="sc">::</span><span class="fu">brewer.pal</span>(nbreaks<span class="dv">-1</span>, <span class="st">"Blues"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="07_changes_files/figure-html/plot_each-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>

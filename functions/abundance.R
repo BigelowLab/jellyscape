@@ -47,7 +47,7 @@ tally_abundance = function(x = read_ecomon_spp(form = 'sf') |> ecomon_to_long(),
   #' @param fun name of the function to apply
   #' @param ... other arguments for fun
   #' @param transform a function for transforming the results
-  #' @param shape chr one of "long" (default) ior "wide"
+  #' @param shape chr one of "long" (default) or "wide"
   #' @return sf table of aggregate per polygon
   
   geom_col = attr(y, "sf_column")

@@ -35,14 +35,14 @@ totabund = tally_abundance(x, h, fun = sum, na.rm = TRUE, shape = "long") |>
 
 ```{r mean_abundance}
 meanabund = tally_abundance(x, h, fun = mean, na.rm = TRUE, shape = "long") |>
-  write_abundance(name = "all_mean_abund_hex")
+ write_abundance(name = "all_mean_abund_hex")
 ```
 
 
 We'll read back in the mean abundance in wide format, and plot that.
 
 ```{r plot_each}
-meanabund = read_abundance("all_mean_abund_hex") |> wider_abundance()
+meanabund = meanabund |> wider_abundance()
 nbreaks = 10
 plot(meanabund,
      nbreaks = nbreaks,
