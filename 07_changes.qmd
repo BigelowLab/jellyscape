@@ -6,7 +6,7 @@ format:
 ---
 
 
-Here we look a changes over time for individual species as well as for the aggregate.  We bin abundance into a hexagonal mesh covering the area, compute long term means and the examine trends over time relative to each mean. 
+Here we look a changes over time for individual species as well as for the aggregate.  We bin abundance into a hexagonal mesh covering the area, compute long term means and the examine trends over time relative to each long-term mean. 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -17,13 +17,36 @@ source("setup.R")
 ```{r load_data}
 x = read_ecomon_spp(form = 'sf') |> ecomon_to_long()
 h = read_hexgrid()
+coast = read_coast()
+plot(sf::st_geometry(x), pch = ".", axes = TRUE, reset = FALSE, main = "All records")
+plot(sf::st_geometry(h), border = "gray", add = TRUE)
+plot(coast, col = "orange", add = TRUE)
 ```
 
-# Total
+
+# Summaries across all time
+
+Here we create long term total and mean per hexagon
 
 ```{r total_abundance}
-abund = tally_abundance(x, h, fun = sum, na.rm = TRUE, transform = log1p)
-plot(abund)
+totabund = tally_abundance(x, h, fun = sum, na.rm = TRUE, shape = "long") |>
+  write_abundance(name = "all_total_abund_hex")
+```
+
+```{r mean_abundance}
+meanabund = tally_abundance(x, h, fun = mean, na.rm = TRUE, shape = "long") |>
+  write_abundance(name = "all_mean_abund_hex")
+```
+
+
+We'll read back in the mean abundance in wide format, and plot that.
+
+```{r plot_each}
+meanabund = read_abundance("all_mean_abund_hex") |> wider_abundance()
+nbreaks = 10
+plot(meanabund,
+     nbreaks = nbreaks,
+     pal = RColorBrewer::brewer.pal(nbreaks-1, "Blues"))
 ```
   
   
