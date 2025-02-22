@@ -97,7 +97,7 @@ dy = y |>
 ggplot(dy) +
   geom_sf(color = "white", aes(fill = dvalue)) +
   geom_sf(data = coast) + 
-  scale_fill_distiller(palette = "Spectral", na.value = NA) +
+  scale_fill_distiller(palette = "Spectral", na.value = NA, type = "div") +
   facet_wrap(~decade)
 ```
 
