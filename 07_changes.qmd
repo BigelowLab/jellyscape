@@ -30,24 +30,74 @@ Here we create long term total and mean per hexagon
 
 ```{r total_abundance}
 totabund = tally_abundance(x, h, fun = sum, na.rm = TRUE, shape = "long") |>
-  write_abundance(name = "all_total_abund_hex")
+  #dplyr::mutate(value = log(value+0.01)) |> 
+  wider_abundance()
+nbreaks = 10
+plot(totabund,
+     nbreaks = nbreaks,
+     pal = RColorBrewer::brewer.pal(nbreaks-1, "Greens"))
 ```
 
-```{r mean_abundance}
-meanabund = tally_abundance(x, h, fun = mean, na.rm = TRUE, shape = "long") |>
- write_abundance(name = "all_mean_abund_hex")
-```
 
-
-We'll read back in the mean abundance in wide format, and plot that.
+# Mean abudance
 
 ```{r plot_each}
-meanabund = meanabund |> wider_abundance()
+mabund = tally_abundance(x, h, fun = mean, na.rm = TRUE, 
+                         shape = "long") |>
+  wider_abundance()
 nbreaks = 10
-plot(meanabund,
+plot(mabund,
      nbreaks = nbreaks,
      pal = RColorBrewer::brewer.pal(nbreaks-1, "Blues"))
 ```
   
-  
-    
+# Decadal abundance
+
+```{r}
+decades = seq(as.Date("1970-01-01"), as.Date("2020-01-01"), by = "10 years")
+y = dplyr::mutate(x,
+                  decade = decades[findInterval(.data$date, decades)]) |>
+  group_by(name, decade) |>
+  group_map(
+    function(tbl, key){
+      tally_by_poly(tbl, h, fun = mean, na.rm = TRUE, shape = "long") |>
+        dplyr::mutate(name = key$name, decade = key$decade, .before = 1) |>
+        write_abundance(sprintf("%s_%s_mean",
+                                format(key$decade, "%Y"),
+                                key$name))
+    }
+  ) |>
+  dplyr::bind_rows()
+```
+
+```{r}
+ta = tally_abundance(x, h, fun = mean, na.rm = TRUE, shape = "long") |>
+  dplyr::filter(name == "total_10m2")
+```
+
+
+```{r}
+dy = y |>
+  dplyr::filter(name == "total_10m2") |>
+  dplyr::group_by(decade) |>
+  dplyr::group_map(
+    function(tbl, key){
+      d = tbl$value - ta$value
+      dplyr::mutate(tbl, 
+                    dvalue = d, 
+                    decade = key$decade,
+                    .after = dplyr::all_of("value"))  
+    } ) |>
+  dplyr::bind_rows()
+```
+
+
+```{r}
+
+ggplot(dy) +
+  geom_sf(color = "white", aes(fill = dvalue)) +
+  geom_sf(data = coast) + 
+  scale_fill_distiller(palette = "Spectral", na.value = NA) +
+  facet_wrap(~decade)
+```
+

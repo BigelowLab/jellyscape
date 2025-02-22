@@ -55,13 +55,11 @@ default_vars = function(){
 }
 
 
-
-
-
 read_ecomon_spp = function(groups = names(default_groups()),
                            per = c("any", "area", "volume")[2],
                            select_vars = names(default_vars()),
                            agg = TRUE,
+                           transform = log1p,
                            form = c("table", "sf")[1]){
   
   #' Read ecomon data for favored species (groups)
@@ -70,6 +68,7 @@ read_ecomon_spp = function(groups = names(default_groups()),
   #' @param per chr, one of "area" or "volume" to select by those metrics, or "any"
   #' @param select_vars chr, the names of the core columns to extract with the groupings
   #' @param agg logical, if TRUE and \code{per} is not "any" then sum the metrics
+  #' @param transform NULL or function, if function apply to abundances (such as log1p or log)
   #' @param form chr, one of "table" or "sf"
   #' @return table or sf table
   #' 
@@ -81,6 +80,12 @@ read_ecomon_spp = function(groups = names(default_groups()),
     } else if (tolower(per[1]) == "volume"){
       x = dplyr::select(x, -dplyr::ends_with("_10m2"))
     }
+  
+  if (!is.null(transform)){
+    pat = if(tolower(per[1]) == "area") "_10m2" else "_100m3"
+    x = x |>
+      dplyr::mutate(dplyr::across(dplyr::ends_with(pat), transform))
+  }
   
   #mtcars %>% mutate(rowsum = rowSums(.[2:4]))
   if (agg){

@@ -1,5 +1,9 @@
 
-read_coast = function(scale = "medium", form = "sf"){
+read_coast = function(scale = "medium", form = "sf",
+                      bb = sf::st_bbox(c(xmin = -77, 
+                             ymin = 34, 
+                             xmax = -63, 
+                             ymax = 45.5), crs = 4326)){
   
   #' Read the coastline
   #' 
@@ -8,7 +12,8 @@ read_coast = function(scale = "medium", form = "sf"){
   #' @return geometry of the coast
   
   rnaturalearth::ne_coastline(scale = scale[1], returnclass = form[1]) |>
-    sf::st_geometry()
+    sf::st_geometry() |>
+    sf::st_crop(bb)
 }
 
 
