@@ -150,7 +150,7 @@ dy = y |>
 ```
 
 We plot these in a series by species.
-```{r, monthly plots}
+```{r monthly plots, out.width="100%"}
 spp = count(dy, name) |> pull(var = 1)
 sppname = sub("_10m2", "", spp, fixed = TRUE)
 gg = lapply(seq_along(spp),
