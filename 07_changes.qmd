@@ -15,7 +15,14 @@ source("setup.R")
 
 
 ```{r load_data}
+decades = seq(as.Date("1970-01-01"), as.Date("2020-01-01"), by = "10 years")
 x = read_ecomon_spp(form = 'sf') |> ecomon_to_long()
+sf_col = attr(x, "sf_column")
+x = x |>
+  dplyr::mutate(year = format(date, "%Y"),
+                month = format(date, "%b") |> factor(levels = month.abb),
+                decade = decades[findInterval(.data$date, decades)],
+                .before = dplyr::all_of(sf_col))
 h = read_hexgrid()
 coast = read_coast()
 plot(sf::st_geometry(x), pch = ".", axes = TRUE, reset = FALSE, main = "All records")
@@ -30,7 +37,6 @@ Here we create long term total and mean per hexagon
 
 ```{r total_abundance}
 totabund = tally_abundance(x, h, fun = sum, na.rm = TRUE, shape = "long") |>
-  #dplyr::mutate(value = log(value+0.01)) |> 
   wider_abundance()
 nbreaks = 10
 plot(totabund,
@@ -53,37 +59,33 @@ plot(mabund,
   
 # Decadal abundance
 
+Here we look at decadal abundance departures for the long term mean. 
+
 ```{r}
-decades = seq(as.Date("1970-01-01"), as.Date("2020-01-01"), by = "10 years")
-y = dplyr::mutate(x,
-                  decade = decades[findInterval(.data$date, decades)]) |>
+y = x |>
   group_by(name, decade) |>
   group_map(
     function(tbl, key){
       tally_by_poly(tbl, h, fun = mean, na.rm = TRUE, shape = "long") |>
-        dplyr::mutate(name = key$name, decade = key$decade, .before = 1) |>
-        write_abundance(sprintf("%s_%s_mean",
-                                format(key$decade, "%Y"),
-                                key$name))
+        dplyr::mutate(name = key$name, decade = key$decade, .before = 1)
     }
   ) |>
   dplyr::bind_rows()
 ```
 
 ```{r}
-ta = tally_abundance(x, h, fun = mean, na.rm = TRUE, shape = "long") |>
-  dplyr::filter(name == "total_10m2")
+ta = tally_abundance(x, h, fun = mean, na.rm = TRUE, shape = "long")
 ```
 
 
 ```{r}
 dy = y |>
-  dplyr::filter(name == "total_10m2") |>
-  dplyr::group_by(decade) |>
+  dplyr::group_by(name, decade) |>
   dplyr::group_map(
     function(tbl, key){
-      d = tbl$value - ta$value
+      d = tbl$value - dplyr::filter(ta, name == key$name) |> dplyr::pull(value)
       dplyr::mutate(tbl, 
+                    name = key$name,
                     dvalue = d, 
                     decade = key$decade,
                     .after = dplyr::all_of("value"))  
@@ -98,6 +100,70 @@ ggplot(dy) +
   geom_sf(color = "white", aes(fill = dvalue)) +
   geom_sf(data = coast) + 
   scale_fill_distiller(palette = "Spectral", na.value = NA, type = "div") +
-  facet_wrap(~decade)
+  facet_grid(name ~ decade)
 ```
+
+# Monthly climatologies
+
+Here we compute means by month for each species (and the total.)  
+
+```{r}
+ma = x |>
+  group_by(name, month) |>
+  group_map(
+    function(tbl, key){
+      tally_by_poly(tbl, h, fun = mean, na.rm = TRUE, shape = "long") |>
+        dplyr::mutate(name = key$name, month = key$month, .before = 1)
+    }
+  ) |>
+  dplyr::bind_rows()
+```
+
+```{r}
+y = x |>
+  group_by(name, decade, month) |>
+  group_map(
+    function(tbl, key){
+      tally_by_poly(tbl, h, fun = mean, na.rm = TRUE, shape = "long") |>
+        dplyr::mutate(name = key$name, decade = key$decade, month = key$month, .before = 1)
+    }
+  ) |>
+  dplyr::bind_rows()
+```
+
+And here we find the departure from the monthly mean for each decade.
+```{r}
+dy = y |>
+  dplyr::group_by(name, decade, month) |>
+  dplyr::group_map(
+    function(tbl, key){
+      d = tbl$value - dplyr::filter(ma, name == key$name, month == key$month) |> 
+        dplyr::pull(value)
+      dplyr::mutate(tbl, 
+                    name = key$name,
+                    dvalue = d, 
+                    month = key$month,
+                    decade = key$decade, 
+                    .after = dplyr::all_of("value"))  
+    } ) |>
+  dplyr::bind_rows()
+```
+
+We plot these in a series by species.
+```{r}
+spp = count(dy, name) |> pull(var = 1)
+sppname = sub("_10m2", "", spp, fixed = TRUE)
+gg = lapply(seq_along(spp),
+  function(i){
+    ggplot(data = filter(dy, name == spp[i])) +
+      geom_sf(color = "white", aes(fill = dvalue)) +
+      geom_sf(data = coast) + 
+      scale_fill_distiller(palette = "Spectral", na.value = NA, type = "div") +
+      labs(fill = sppname[i]) + 
+      facet_grid(decade ~ month) + 
+      theme(axis.text = element_blank())
+  })
+for (g in gg) g
+```
+
 
