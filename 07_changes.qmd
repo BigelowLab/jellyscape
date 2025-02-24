@@ -16,12 +16,13 @@ source("setup.R")
 
 ```{r load_data}
 decades = seq(as.Date("1970-01-01"), as.Date("2020-01-01"), by = "10 years")
+decadestarts = format(decades, "%Y")
 x = read_ecomon_spp(form = 'sf') |> ecomon_to_long()
 sf_col = attr(x, "sf_column")
 x = x |>
   dplyr::mutate(year = format(date, "%Y"),
                 month = format(date, "%b") |> factor(levels = month.abb),
-                decade = decades[findInterval(.data$date, decades)],
+                decade = decadestarts[findInterval(.data$date, decades)],
                 .before = dplyr::all_of(sf_col))
 h = read_hexgrid()
 coast = read_coast()
@@ -107,6 +108,10 @@ ggplot(dy) +
 
 Here we compute means by month for each species (and the total.)  
 
+`ma` = mean of abundance 
+
+`sda` = standard deviation of abundance
+
 ```{r}
 ma = x |>
   group_by(name, month) |>
@@ -118,6 +123,21 @@ ma = x |>
   ) |>
   dplyr::bind_rows()
 ```
+
+
+```{r}
+sda = x |>
+  group_by(name, month) |>
+  group_map(
+    function(tbl, key){
+      tally_by_poly(tbl, h, fun = sd, na.rm = TRUE, shape = "long") |>
+        dplyr::mutate(name = key$name, month = key$month, .before = 1)
+    }
+  ) |>
+  dplyr::bind_rows()
+```
+
+`y` is the monthly mean per decade
 
 ```{r}
 y = x |>
@@ -131,17 +151,21 @@ y = x |>
   dplyr::bind_rows()
 ```
 
-And here we find the departure from the monthly mean for each decade.
+And here we find the departure from the monthly mean for each decade in standard deviations.
+
 ```{r}
 dy = y |>
   dplyr::group_by(name, decade, month) |>
   dplyr::group_map(
     function(tbl, key){
-      d = tbl$value - dplyr::filter(ma, name == key$name, month == key$month) |> 
-        dplyr::pull(value)
+      # (value - ma)/sd
+      ltm =  dplyr::filter(ma,  name == key$name, month == key$month) |>
+        dplyr::pull(dplyr::all_of("value"))
+      std = dplyr::filter(sda,  name == key$name,   month == key$month) |>
+        dplyr::pull(dplyr::all_of("value"))
       dplyr::mutate(tbl, 
                     name = key$name,
-                    dvalue = d, 
+                    dvalue = (tbl$value - ltm)/std, 
                     month = key$month,
                     decade = key$decade, 
                     .after = dplyr::all_of("value"))  
