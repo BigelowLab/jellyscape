@@ -150,7 +150,7 @@ dy = y |>
 ```
 
 We plot these in a series by species.
-```{r}
+```{r, monthly plots}
 spp = count(dy, name) |> pull(var = 1)
 sppname = sub("_10m2", "", spp, fixed = TRUE)
 gg = lapply(seq_along(spp),
@@ -163,7 +163,7 @@ gg = lapply(seq_along(spp),
       facet_grid(decade ~ month) + 
       theme(axis.text = element_blank())
   })
-for (g in gg) g
+for (g in gg) print(g)
 ```
 
 
