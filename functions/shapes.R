@@ -11,7 +11,7 @@ read_boundary = function(name = "lme",
 
 
 
-make_hexgrid = function(x = read_ecomon_spp(), size = 1, clip = TRUE){
+make_hexgrid = function(x = read_ecomon_spp(form = "sf"), size = 1, clip = TRUE){
   
   #' Make a hex grid of a suggested size from a spatial object
   #' 
@@ -31,7 +31,8 @@ make_hexgrid = function(x = read_ecomon_spp(), size = 1, clip = TRUE){
   hexgrid |>
     dplyr::filter(lengths(ix) > 0) |>
     sf::st_as_sf() |>
-    sf::st_set_geometry("geom")
+    sf::st_set_geometry("geom") |>
+    dplyr::mutate(id = seq_len(dplyr::n()), .before = 1)
 }
 
 
@@ -60,4 +61,9 @@ read_hexgrid = function(name = "hexgrid",
   sf::read_sf(filename)
 }
 
+
+plot_hexgrid = function(x = read_hexgrid(), ...){
+  plot(sf::st_geometry(x), border = "grey", axes = TRUE, reset = FALSE)
+  text(x, labels = x$id)
+}
   

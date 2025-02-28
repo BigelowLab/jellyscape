@@ -206,9 +206,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#summaries-across-all-time" id="toc-summaries-across-all-time" class="nav-link active" data-scroll-target="#summaries-across-all-time"><span class="header-section-number">1</span> Summaries across all time</a></li>
-  <li><a href="#mean-abudance" id="toc-mean-abudance" class="nav-link" data-scroll-target="#mean-abudance"><span class="header-section-number">2</span> Mean abudance</a></li>
-  <li><a href="#decadal-abundance" id="toc-decadal-abundance" class="nav-link" data-scroll-target="#decadal-abundance"><span class="header-section-number">3</span> Decadal abundance</a></li>
-  <li><a href="#monthly-climatologies" id="toc-monthly-climatologies" class="nav-link" data-scroll-target="#monthly-climatologies"><span class="header-section-number">4</span> Monthly climatologies</a></li>
+  <li><a href="#summary-of-abudance-by-month." id="toc-summary-of-abudance-by-month." class="nav-link" data-scroll-target="#summary-of-abudance-by-month."><span class="header-section-number">2</span> Summary of abudance by month.</a></li>
+  <li><a href="#standardized-anomalies" id="toc-standardized-anomalies" class="nav-link" data-scroll-target="#standardized-anomalies"><span class="header-section-number">3</span> Standardized anomalies</a>
+  <ul class="collapse">
+  <li><a href="#decadal-anomalies" id="toc-decadal-anomalies" class="nav-link" data-scroll-target="#decadal-anomalies"><span class="header-section-number">3.1</span> Decadal anomalies</a></li>
+  <li><a href="#monthly-anomalies-by-year" id="toc-monthly-anomalies-by-year" class="nav-link" data-scroll-target="#monthly-anomalies-by-year"><span class="header-section-number">3.2</span> Monthly anomalies by year</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -241,262 +244,265 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>decades <span class="ot">=</span> <span class="fu">seq</span>(<span class="fu">as.Date</span>(<span class="st">"1970-01-01"</span>), <span class="fu">as.Date</span>(<span class="st">"2020-01-01"</span>), <span class="at">by =</span> <span class="st">"10 years"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>decadestarts <span class="ot">=</span> <span class="fu">format</span>(decades, <span class="st">"%Y"</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">read_ecomon_spp</span>(<span class="at">form =</span> <span class="st">'sf'</span>) <span class="sc">|&gt;</span> <span class="fu">ecomon_to_long</span>()</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>sf_col <span class="ot">=</span> <span class="fu">attr</span>(x, <span class="st">"sf_column"</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> x <span class="sc">|&gt;</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">format</span>(date, <span class="st">"%Y"</span>),</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">month =</span> <span class="fu">format</span>(date, <span class="st">"%b"</span>) <span class="sc">|&gt;</span> <span class="fu">factor</span>(<span class="at">levels =</span> month.abb),</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">decade =</span> decadestarts[<span class="fu">findInterval</span>(.data<span class="sc">$</span>date, decades)],</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">.before =</span> dplyr<span class="sc">::</span><span class="fu">all_of</span>(sf_col))</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>h <span class="ot">=</span> <span class="fu">read_hexgrid</span>()</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>coast <span class="ot">=</span> <span class="fu">read_coast</span>()</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sf<span class="sc">::</span><span class="fu">st_geometry</span>(x), <span class="at">pch =</span> <span class="st">"."</span>, <span class="at">axes =</span> <span class="cn">TRUE</span>, <span class="at">reset =</span> <span class="cn">FALSE</span>, <span class="at">main =</span> <span class="st">"All records"</span>)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sf<span class="sc">::</span><span class="fu">st_geometry</span>(h), <span class="at">border =</span> <span class="st">"gray"</span>, <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(coast, <span class="at">col =</span> <span class="st">"orange"</span>, <span class="at">add =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>years <span class="ot">=</span> <span class="fu">unique</span>(x<span class="sc">$</span>year) <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>() <span class="sc">|&gt;</span> <span class="fu">sort</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Unknown or uninitialised column: `year`.</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>sf_col <span class="ot">=</span> <span class="fu">attr</span>(x, <span class="st">"sf_column"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> x <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">format</span>(date, <span class="st">"%Y"</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">month =</span> <span class="fu">format</span>(date, <span class="st">"%b"</span>) <span class="sc">|&gt;</span> <span class="fu">factor</span>(<span class="at">levels =</span> month.abb),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">decade =</span> decadestarts[<span class="fu">findInterval</span>(.data<span class="sc">$</span>date, decades)],</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">.before =</span> dplyr<span class="sc">::</span><span class="fu">all_of</span>(sf_col))</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>h <span class="ot">=</span> <span class="fu">read_hexgrid</span>()</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>coast <span class="ot">=</span> <span class="fu">read_coast</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Here’s a plot of the hexagonal grid, enumerated from lower left to upper right.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sf<span class="sc">::</span><span class="fu">st_geometry</span>(x), <span class="at">pch =</span> <span class="st">"."</span>, <span class="at">axes =</span> <span class="cn">TRUE</span>, <span class="at">reset =</span> <span class="cn">FALSE</span>, <span class="at">main =</span> <span class="st">"All records"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sf<span class="sc">::</span><span class="fu">st_geometry</span>(h), <span class="at">border =</span> <span class="st">"gray"</span>, <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(h, <span class="at">labels =</span> h<span class="sc">$</span>id, <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">col =</span> <span class="st">"pink"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(coast, <span class="at">col =</span> <span class="st">"orange"</span>, <span class="at">add =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="07_changes_files/figure-html/load_data-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="07_changes_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <section id="summaries-across-all-time" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Summaries across all time</h1>
-<p>Here we create long term total and mean per hexagon</p>
+<p>Here we compute a summary of abundance with multiple summary metrics including count (n), minimum, 25th quantile, median (50th quantile), mean, standard deviation, 75th quantile, maximum and sum.</p>
+<p>Total of abundance from to - over 62 polygons for 5 species plus the total (so a total of 6 groups or species). This produces a wide table with 372 records (62 polygons x 6 species).</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>totabund <span class="ot">=</span> <span class="fu">tally_abundance</span>(x, h, <span class="at">fun =</span> sum, <span class="at">na.rm =</span> <span class="cn">TRUE</span>, <span class="at">shape =</span> <span class="st">"long"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">wider_abundance</span>()</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>nbreaks <span class="ot">=</span> <span class="dv">10</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(totabund,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">nbreaks =</span> nbreaks,</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">pal =</span> RColorBrewer<span class="sc">::</span><span class="fu">brewer.pal</span>(nbreaks<span class="dv">-1</span>, <span class="st">"Greens"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>summa_ltm <span class="ot">=</span> <span class="fu">summary_abundance</span>(x,h) <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_summary</span>(<span class="at">name =</span> <span class="st">"summary_long_term"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 372
+Columns: 12
+$ name   &lt;chr&gt; "coel_10m2", "coel_10m2", "coel_10m2", "coel_10m2", "coel_10m2"…
+$ n      &lt;dbl&gt; 0, 208, 10, 217, 915, 20, 675, 843, 22, 403, 918, 557, 797, 0, …
+$ min    &lt;dbl&gt; NA, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NA, 0, 0, 0, 0, 0, 0, 0…
+$ q25    &lt;dbl&gt; NA, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NA, 0, 0, 0, 0, 0, 0, 0…
+$ median &lt;dbl&gt; NA, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000,…
+$ mean   &lt;dbl&gt; NaN, 2.194876, 1.988862, 2.319131, 2.048842, 1.896784, 2.034416…
+$ sdev   &lt;dbl&gt; NA, 3.675159, 4.208387, 3.475980, 3.530252, 3.441275, 3.482367,…
+$ q75    &lt;dbl&gt; NA, 5.909072, 0.000000, 6.208972, 5.029608, 2.888191, 5.771074,…
+$ max    &lt;dbl&gt; NA, 12.905754, 10.709739, 10.107543, 12.046507, 9.362266, 11.80…
+$ sum    &lt;dbl&gt; 0.00000, 456.53427, 19.88862, 503.25133, 1874.69043, 37.93569, …
+$ id     &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, …
+$ geom   &lt;POLYGON [°]&gt; POLYGON ((-75.97 33.88935, ..., POLYGON ((-75.97 35.621…</code></pre>
+</div>
+</div>
+<p>With a little jiggle we can produce a map showing the total abundance per polygon.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>s <span class="ot">=</span> summa_ltm <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">longer_summary</span>() <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(sname <span class="sc">==</span> <span class="st">"sum"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> <span class="st">"name"</span>, <span class="at">values_from =</span> <span class="st">"value"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>sname)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>nbreaks <span class="ot">=</span> <span class="dv">10</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(s,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">nbreaks =</span> nbreaks,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">pal =</span> RColorBrewer<span class="sc">::</span><span class="fu">brewer.pal</span>(nbreaks<span class="dv">-1</span>, <span class="st">"Greens"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="07_changes_files/figure-html/total_abundance-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="07_changes_files/figure-html/plot_summa-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="mean-abudance" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> Mean abudance</h1>
+<section id="summary-of-abudance-by-month." class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Summary of abudance by month.</h1>
+<p>We do this for each species each month (62 polygons x 6 species * 12 months = 4464 records). It is this table that provides the mean and standard deviation for computing standardized anomalies by polygon and month.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mabund <span class="ot">=</span> <span class="fu">tally_abundance</span>(x, h, <span class="at">fun =</span> mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">shape =</span> <span class="st">"long"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">wider_abundance</span>()</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>nbreaks <span class="ot">=</span> <span class="dv">10</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mabund,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">nbreaks =</span> nbreaks,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">pal =</span> RColorBrewer<span class="sc">::</span><span class="fu">brewer.pal</span>(nbreaks<span class="dv">-1</span>, <span class="st">"Blues"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="07_changes_files/figure-html/plot_each-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="decadal-abundance" class="level1" data-number="3">
-<h1 data-number="3"><span class="header-section-number">3</span> Decadal abundance</h1>
-<p>Here we look at decadal abundance departures for the long term mean.</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> x <span class="sc">|&gt;</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(name, decade) <span class="sc">|&gt;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_map</span>(</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">function</span>(tbl, key){</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">tally_by_poly</span>(tbl, h, <span class="at">fun =</span> mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>, <span class="at">shape =</span> <span class="st">"long"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">name =</span> key<span class="sc">$</span>name, <span class="at">decade =</span> key<span class="sc">$</span>decade, <span class="at">.before =</span> <span class="dv">1</span>)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">bind_rows</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ta <span class="ot">=</span> <span class="fu">tally_abundance</span>(x, h, <span class="at">fun =</span> mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>, <span class="at">shape =</span> <span class="st">"long"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dy <span class="ot">=</span> y <span class="sc">|&gt;</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(name, decade) <span class="sc">|&gt;</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_map</span>(</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">function</span>(tbl, key){</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>      d <span class="ot">=</span> tbl<span class="sc">$</span>value <span class="sc">-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(ta, name <span class="sc">==</span> key<span class="sc">$</span>name) <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">pull</span>(value)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">mutate</span>(tbl, </span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">name =</span> key<span class="sc">$</span>name,</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">dvalue =</span> d, </span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">decade =</span> key<span class="sc">$</span>decade,</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">.after =</span> dplyr<span class="sc">::</span><span class="fu">all_of</span>(<span class="st">"value"</span>))  </span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    } ) <span class="sc">|&gt;</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">bind_rows</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dy) <span class="sc">+</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="fu">aes</span>(<span class="at">fill =</span> dvalue)) <span class="sc">+</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> coast) <span class="sc">+</span> </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_distiller</span>(<span class="at">palette =</span> <span class="st">"Spectral"</span>, <span class="at">na.value =</span> <span class="cn">NA</span>, <span class="at">type =</span> <span class="st">"div"</span>) <span class="sc">+</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(name <span class="sc">~</span> decade)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="07_changes_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="monthly-climatologies" class="level1" data-number="4">
-<h1 data-number="4"><span class="header-section-number">4</span> Monthly climatologies</h1>
-<p>Here we compute means by month for each species (and the total.)</p>
-<p><code>ma</code> = mean of abundance</p>
-<p><code>sda</code> = standard deviation of abundance</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ma <span class="ot">=</span> x <span class="sc">|&gt;</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(name, month) <span class="sc">|&gt;</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_map</span>(</span>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>summa_mon <span class="ot">=</span> x <span class="sc">|&gt;</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(name, month) <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_map</span>(</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">function</span>(tbl, key){</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">tally_by_poly</span>(tbl, h, <span class="at">fun =</span> mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>, <span class="at">shape =</span> <span class="st">"long"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summary_by_poly</span>(tbl, h) <span class="sc">|&gt;</span></span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">name =</span> key<span class="sc">$</span>name, <span class="at">month =</span> key<span class="sc">$</span>month, <span class="at">.before =</span> <span class="dv">1</span>)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">bind_rows</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    }  ) <span class="sc">|&gt;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">bind_rows</span>() <span class="sc">|&gt;</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_summary</span>(<span class="at">name =</span> <span class="st">"summary_each_month"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 4,464
+Columns: 13
+$ name   &lt;chr&gt; "coel_10m2", "coel_10m2", "coel_10m2", "coel_10m2", "coel_10m2"…
+$ month  &lt;fct&gt; Jan, Jan, Jan, Jan, Jan, Jan, Jan, Jan, Jan, Jan, Jan, Jan, Jan…
+$ n      &lt;dbl&gt; 0, 6, 0, 6, 21, 0, 15, 18, 0, 9, 22, 17, 23, 0, 27, 29, 30, 1, …
+$ min    &lt;dbl&gt; NA, 0, NA, 0, 0, NA, 0, 0, NA, 0, 0, 0, 0, NA, 0, 0, 0, 0, 0, 0…
+$ q25    &lt;dbl&gt; NA, 0, NA, 0, 0, NA, 0, 0, NA, 0, 0, 0, 0, NA, 0, 0, 0, 0, 0, 0…
+$ median &lt;dbl&gt; NA, 0.000000, NA, 0.000000, 0.000000, NA, 0.000000, 0.000000, N…
+$ mean   &lt;dbl&gt; NA, 0.00000000, NA, 0.83037264, 0.07986174, NA, 1.47821691, 0.2…
+$ sdev   &lt;dbl&gt; NA, 0.0000000, NA, 2.0339893, 0.3659725, NA, 2.5389477, 1.18570…
+$ q75    &lt;dbl&gt; NA, 0.000000, NA, 0.000000, 0.000000, NA, 2.660333, 0.000000, N…
+$ max    &lt;dbl&gt; NA, 0.000000, NA, 4.982236, 1.677097, NA, 5.752954, 5.030503, N…
+$ sum    &lt;dbl&gt; NA, 0.000000, NA, 4.982236, 1.677097, NA, 22.173254, 5.030503, …
+$ id     &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, …
+$ geom   &lt;POLYGON [°]&gt; POLYGON ((-75.97 33.88935, ..., POLYGON ((-75.97 35.621…</code></pre>
 </div>
+</div>
+</section>
+<section id="standardized-anomalies" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Standardized anomalies</h1>
+<p>We compute for each species (and the total) the monthly standardize anomaly relative to the long term mean. The anomaly is computed for each time step in each cell as the departure from the long term mean (from above) divided by the standard deviation of the long term mean (also from above). The anomaly time step can be year or decade for each month.</p>
+<section id="decadal-anomalies" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="decadal-anomalies"><span class="header-section-number">3.1</span> Decadal anomalies</h2>
+<p>Here we look at decadal abundance departures from the long term mean.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>sda <span class="ot">=</span> x <span class="sc">|&gt;</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(name, month) <span class="sc">|&gt;</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_map</span>(</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">function</span>(tbl, key){</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">tally_by_poly</span>(tbl, h, <span class="at">fun =</span> sd, <span class="at">na.rm =</span> <span class="cn">TRUE</span>, <span class="at">shape =</span> <span class="st">"long"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">name =</span> key<span class="sc">$</span>name, <span class="at">month =</span> key<span class="sc">$</span>month, <span class="at">.before =</span> <span class="dv">1</span>)</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">bind_rows</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>geom_col <span class="ot">=</span> <span class="fu">attr</span>(h, <span class="st">"sf_column"</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>nh <span class="ot">=</span> <span class="fu">nrow</span>(h)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>anom_decade <span class="ot">=</span> x <span class="sc">|&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(name, month, decade) <span class="sc">|&gt;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_map</span>(</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">function</span>(tbl, key){</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>      m <span class="ot">=</span> <span class="fu">tally_by_poly</span>(tbl, h, <span class="at">fun =</span> mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">pull</span>(<span class="at">var =</span> <span class="dv">1</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>      s <span class="ot">=</span> summa_mon <span class="sc">|&gt;</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">filter</span>(name <span class="sc">==</span> key<span class="sc">$</span>name, month <span class="sc">==</span> key<span class="sc">$</span>month)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">mutate</span>(h,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>                    <span class="at">name =</span> key<span class="sc">$</span>name,</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>                    <span class="at">decade =</span> key<span class="sc">$</span>decade,</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>                    <span class="at">month =</span> key<span class="sc">$</span>month,</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>                    <span class="at">anomaly =</span> (m <span class="sc">-</span> s<span class="sc">$</span>mean)<span class="sc">/</span>s<span class="sc">$</span>sdev, </span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>                    <span class="at">.before =</span> dplyr<span class="sc">::</span><span class="fu">all_of</span>(geom_col)) <span class="sc">|&gt;</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">select</span>(dplyr<span class="sc">::</span><span class="fu">all_of</span>(<span class="fu">c</span>(<span class="st">"name"</span>, <span class="st">"decade"</span>, <span class="st">"month"</span>, <span class="st">"anomaly"</span>, <span class="st">"id"</span>)))</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">bind_rows</span>() <span class="sc">|&gt;</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_anomaly</span>(<span class="at">name =</span> <span class="st">"anom_month_decade"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p><code>y</code> is the monthly mean per decade</p>
+<p>Plot a grid of monthly spatial anomalies by decade for just the “total_10m2” species. You have to squint!</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> x <span class="sc">|&gt;</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(name, decade, month) <span class="sc">|&gt;</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_map</span>(</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">function</span>(tbl, key){</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">tally_by_poly</span>(tbl, h, <span class="at">fun =</span> mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>, <span class="at">shape =</span> <span class="st">"long"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">name =</span> key<span class="sc">$</span>name, <span class="at">decade =</span> key<span class="sc">$</span>decade, <span class="at">month =</span> key<span class="sc">$</span>month, <span class="at">.before =</span> <span class="dv">1</span>)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">bind_rows</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>spp <span class="ot">=</span> <span class="st">"total_10m2"</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(anom_decade <span class="sc">|&gt;</span> <span class="fu">filter</span>(name <span class="sc">==</span> spp)) <span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="fu">aes</span>(<span class="at">fill =</span> anomaly)) <span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> coast) <span class="sc">+</span> </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_distiller</span>(<span class="at">palette =</span> <span class="st">"Spectral"</span>, <span class="at">na.value =</span> <span class="cn">NA</span>, <span class="at">type =</span> <span class="st">"div"</span>) <span class="sc">+</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(decade <span class="sc">~</span> month) <span class="sc">+</span> </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text =</span> <span class="fu">element_blank</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="07_changes_files/figure-html/plot_anom_decade-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+</figure>
 </div>
-<p>And here we find the departure from the monthly mean for each decade in standard deviations.</p>
+</div>
+</div>
+<p>We can also plot one polygon as a heat map.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>dy <span class="ot">=</span> y <span class="sc">|&gt;</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(name, decade, month) <span class="sc">|&gt;</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_map</span>(</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">function</span>(tbl, key){</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>      <span class="co"># (value - ma)/sd</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>      ltm <span class="ot">=</span>  dplyr<span class="sc">::</span><span class="fu">filter</span>(ma,  name <span class="sc">==</span> key<span class="sc">$</span>name, month <span class="sc">==</span> key<span class="sc">$</span>month) <span class="sc">|&gt;</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">pull</span>(dplyr<span class="sc">::</span><span class="fu">all_of</span>(<span class="st">"value"</span>))</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>      std <span class="ot">=</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(sda,  name <span class="sc">==</span> key<span class="sc">$</span>name,   month <span class="sc">==</span> key<span class="sc">$</span>month) <span class="sc">|&gt;</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">pull</span>(dplyr<span class="sc">::</span><span class="fu">all_of</span>(<span class="st">"value"</span>))</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">mutate</span>(tbl, </span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                    <span class="at">name =</span> key<span class="sc">$</span>name,</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>                    <span class="at">dvalue =</span> (tbl<span class="sc">$</span>value <span class="sc">-</span> ltm)<span class="sc">/</span>std, </span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>                    <span class="at">month =</span> key<span class="sc">$</span>month,</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>                    <span class="at">decade =</span> key<span class="sc">$</span>decade, </span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>                    <span class="at">.after =</span> dplyr<span class="sc">::</span><span class="fu">all_of</span>(<span class="st">"value"</span>))  </span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    } ) <span class="sc">|&gt;</span></span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">bind_rows</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>poly_id <span class="ot">=</span> <span class="dv">42</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>dec <span class="ot">=</span> <span class="fu">as.numeric</span>(decadestarts)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> anom_decade <span class="sc">|&gt;</span> </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>         <span class="fu">st_drop_geometry</span>() <span class="sc">|&gt;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>         <span class="fu">filter</span>(name <span class="sc">==</span> spp, id <span class="sc">==</span> poly_id) <span class="sc">|&gt;</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>         <span class="fu">mutate</span>(<span class="at">decade =</span> <span class="fu">as.numeric</span>(decade)),</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">mapping =</span> <span class="fu">aes</span>(month, decade)) <span class="sc">+</span> </span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">fill =</span> anomaly), <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lims</span>(<span class="at">y =</span> <span class="fu">rev</span>(<span class="fu">range</span>(dec) <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">5</span>,<span class="dv">5</span>))) <span class="sc">+</span> </span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">sprintf</span>(<span class="st">"spp: %s, interval: decade, polygon: %i"</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>                       spp, poly_id)) <span class="sc">+</span> </span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a> <span class="fu">scale_fill_distiller</span>(<span class="at">palette =</span> <span class="st">"Spectral"</span>, <span class="at">na.value =</span> <span class="cn">NA</span>, <span class="at">type =</span> <span class="st">"div"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="07_changes_files/figure-html/plot_decade_heatmap-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
-<p>We plot these in a series by species.</p>
+</div>
+</div>
+</section>
+<section id="monthly-anomalies-by-year" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="monthly-anomalies-by-year"><span class="header-section-number">3.2</span> Monthly anomalies by year</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>spp <span class="ot">=</span> <span class="fu">count</span>(dy, name) <span class="sc">|&gt;</span> <span class="fu">pull</span>(<span class="at">var =</span> <span class="dv">1</span>)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>sppname <span class="ot">=</span> <span class="fu">sub</span>(<span class="st">"_10m2"</span>, <span class="st">""</span>, spp, <span class="at">fixed =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>gg <span class="ot">=</span> <span class="fu">lapply</span>(<span class="fu">seq_along</span>(spp),</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(i){</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="at">data =</span> <span class="fu">filter</span>(dy, name <span class="sc">==</span> spp[i])) <span class="sc">+</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_sf</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="fu">aes</span>(<span class="at">fill =</span> dvalue)) <span class="sc">+</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_sf</span>(<span class="at">data =</span> coast) <span class="sc">+</span> </span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_fill_distiller</span>(<span class="at">palette =</span> <span class="st">"Spectral"</span>, <span class="at">na.value =</span> <span class="cn">NA</span>, <span class="at">type =</span> <span class="st">"div"</span>) <span class="sc">+</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">fill =</span> sppname[i]) <span class="sc">+</span> </span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">facet_grid</span>(decade <span class="sc">~</span> month) <span class="sc">+</span> </span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme</span>(<span class="at">axis.text =</span> <span class="fu">element_blank</span>())</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (g <span class="cf">in</span> gg) <span class="fu">print</span>(g)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>geom_col <span class="ot">=</span> <span class="fu">attr</span>(h, <span class="st">"sf_column"</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>anom_year <span class="ot">=</span> x <span class="sc">|&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(name, month, year) <span class="sc">|&gt;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_map</span>(</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">function</span>(tbl, key){</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>      m <span class="ot">=</span> <span class="fu">tally_by_poly</span>(tbl, h, <span class="at">fun =</span> mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">pull</span>(<span class="at">var =</span> <span class="dv">1</span>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>      s <span class="ot">=</span> summa_mon <span class="sc">|&gt;</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">filter</span>(name <span class="sc">==</span> key<span class="sc">$</span>name, month <span class="sc">==</span> key<span class="sc">$</span>month)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">mutate</span>(h,</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>                    <span class="at">name =</span> key<span class="sc">$</span>name,</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>                    <span class="at">year =</span> key<span class="sc">$</span>year,</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>                    <span class="at">month =</span> key<span class="sc">$</span>month,</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>                    <span class="at">anomaly =</span> (m <span class="sc">-</span> s<span class="sc">$</span>mean)<span class="sc">/</span>s<span class="sc">$</span>sdev, </span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>                    <span class="at">.before =</span> dplyr<span class="sc">::</span><span class="fu">all_of</span>(geom_col)) <span class="sc">|&gt;</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">select</span>(dplyr<span class="sc">::</span><span class="fu">all_of</span>(<span class="fu">c</span>(<span class="st">"name"</span>, <span class="st">"year"</span>, <span class="st">"month"</span>, <span class="st">"anomaly"</span>, <span class="st">"id"</span>)))</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">bind_rows</span>() <span class="sc">|&gt;</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>   <span class="fu">write_anomaly</span>(<span class="at">name =</span> <span class="st">"anom_month_year"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="07_changes_files/figure-html/monthly plots-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-</figure>
 </div>
+<p>And plot a heatmap.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> anom_year <span class="sc">|&gt;</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>         <span class="fu">st_drop_geometry</span>() <span class="sc">|&gt;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>         <span class="fu">filter</span>(name <span class="sc">==</span> spp, id <span class="sc">==</span> poly_id) <span class="sc">|&gt;</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>         <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">as.numeric</span>(year)),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">mapping =</span> <span class="fu">aes</span>(month, year)) <span class="sc">+</span> </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">fill =</span> anomaly), <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lims</span>(<span class="at">y =</span> <span class="fu">rev</span>(<span class="fu">range</span>(years) <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">5</span>,<span class="dv">5</span>))) <span class="sc">+</span> </span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">sprintf</span>(<span class="st">"spp: %s, interval: decade, polygon: %i"</span>,</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>                       spp, poly_id)) <span class="sc">+</span> </span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a> <span class="fu">scale_fill_distiller</span>(<span class="at">palette =</span> <span class="st">"Spectral"</span>, <span class="at">na.value =</span> <span class="cn">NA</span>, <span class="at">type =</span> <span class="st">"div"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in min(x): no non-missing arguments to min; returning Inf</code></pre>
 </div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="07_changes_files/figure-html/monthly plots-2.png" class="img-fluid figure-img" style="width:100.0%"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="07_changes_files/figure-html/monthly plots-3.png" class="img-fluid figure-img" style="width:100.0%"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="07_changes_files/figure-html/monthly plots-4.png" class="img-fluid figure-img" style="width:100.0%"></p>
-</figure>
-</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in max(x): no non-missing arguments to max; returning -Inf</code></pre>
 </div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="07_changes_files/figure-html/monthly plots-5.png" class="img-fluid figure-img" style="width:100.0%"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="07_changes_files/figure-html/monthly plots-6.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<p><img src="07_changes_files/figure-html/plot_anom_year-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 
 
+</section>
 </section>
 
 <a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->

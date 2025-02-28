@@ -18,6 +18,9 @@ source("setup.R")
 decades = seq(as.Date("1970-01-01"), as.Date("2020-01-01"), by = "10 years")
 decadestarts = format(decades, "%Y")
 x = read_ecomon_spp(form = 'sf') |> ecomon_to_long()
+
+years = unique(x$year) |> as.numeric() |> sort()
+
 sf_col = attr(x, "sf_column")
 x = x |>
   dplyr::mutate(year = format(date, "%Y"),
@@ -26,168 +29,164 @@ x = x |>
                 .before = dplyr::all_of(sf_col))
 h = read_hexgrid()
 coast = read_coast()
+```
+
+
+Here's a plot of the hexagonal grid, enumerated from lower left to upper right. 
+
+```{r}
 plot(sf::st_geometry(x), pch = ".", axes = TRUE, reset = FALSE, main = "All records")
 plot(sf::st_geometry(h), border = "gray", add = TRUE)
+text(h, labels = h$id, cex = 0.7, col = "pink")
 plot(coast, col = "orange", add = TRUE)
 ```
 
 
 # Summaries across all time
 
-Here we create long term total and mean per hexagon
+Here we compute a summary of abundance with multiple summary metrics including count (n), minimum, 25th quantile, median (50th quantile), mean, standard deviation, 75th quantile, maximum and sum.
 
-```{r total_abundance}
-totabund = tally_abundance(x, h, fun = sum, na.rm = TRUE, shape = "long") |>
-  wider_abundance()
+Total of abundance from `{r} min(x$Date)` to `{r} max(x$Date)` over 62 polygons for 5 species plus the total (so a total of 6 groups or species).  This produces a wide table with 372 records (62 polygons x 6 species).
+
+```{r summa}
+summa_ltm = summary_abundance(x,h) |>
+  write_summary(name = "summary_long_term") |>
+  glimpse()
+```
+
+With a little jiggle we can produce a map showing the total abundance per polygon.
+```{r plot_summa}
+s = summa_ltm |>
+  longer_summary() |>
+  filter(sname == "sum") |>
+  pivot_wider(names_from = "name", values_from = "value") |>
+  select(-sname)
 nbreaks = 10
-plot(totabund,
+plot(s,
      nbreaks = nbreaks,
      pal = RColorBrewer::brewer.pal(nbreaks-1, "Greens"))
 ```
 
 
-# Mean abudance
+# Summary of abudance by month.
 
-```{r plot_each}
-mabund = tally_abundance(x, h, fun = mean, na.rm = TRUE, 
-                         shape = "long") |>
-  wider_abundance()
-nbreaks = 10
-plot(mabund,
-     nbreaks = nbreaks,
-     pal = RColorBrewer::brewer.pal(nbreaks-1, "Blues"))
-```
-  
-# Decadal abundance
-
-Here we look at decadal abundance departures for the long term mean. 
-
-```{r}
-y = x |>
-  group_by(name, decade) |>
-  group_map(
-    function(tbl, key){
-      tally_by_poly(tbl, h, fun = mean, na.rm = TRUE, shape = "long") |>
-        dplyr::mutate(name = key$name, decade = key$decade, .before = 1)
-    }
-  ) |>
-  dplyr::bind_rows()
-```
-
-```{r}
-ta = tally_abundance(x, h, fun = mean, na.rm = TRUE, shape = "long")
-```
+We do this for each species each month (62 polygons x 6 species * 12 months = 4464 records).  It is this table that provides the mean and standard deviation for computing standardized anomalies by polygon and month.
 
 
-```{r}
-dy = y |>
-  dplyr::group_by(name, decade) |>
+```{r summa_mon}
+summa_mon = x |> 
+  dplyr::group_by(name, month) |>
   dplyr::group_map(
     function(tbl, key){
-      d = tbl$value - dplyr::filter(ta, name == key$name) |> dplyr::pull(value)
-      dplyr::mutate(tbl, 
+      summary_by_poly(tbl, h) |>
+        dplyr::mutate(name = key$name, month = key$month, .before = 1)
+    }  ) |>
+  dplyr::bind_rows() |>
+  write_summary(name = "summary_each_month") |>
+  glimpse()
+```
+
+# Standardized anomalies
+
+We compute for each species (and the total) the monthly standardize anomaly relative to the long term mean.  The anomaly is computed for each time step in each cell as the departure from the long term mean (from above) divided by the standard deviation of the long term mean (also from above).  The anomaly time step can be year or decade for each month.
+
+## Decadal anomalies
+Here we look at decadal abundance departures from the long term mean. 
+
+```{r anom_decade}
+geom_col = attr(h, "sf_column")
+nh = nrow(h)
+anom_decade = x |>
+  group_by(name, month, decade) |>
+  group_map(
+    function(tbl, key){
+      m = tally_by_poly(tbl, h, fun = mean, na.rm = TRUE) |>
+        dplyr::pull(var = 1)
+      s = summa_mon |>
+        dplyr::filter(name == key$name, month == key$month)
+      dplyr::mutate(h,
                     name = key$name,
-                    dvalue = d, 
                     decade = key$decade,
-                    .after = dplyr::all_of("value"))  
-    } ) |>
-  dplyr::bind_rows()
+                    month = key$month,
+                    anomaly = (m - s$mean)/s$sdev, 
+                    .before = dplyr::all_of(geom_col)) |>
+      dplyr::select(dplyr::all_of(c("name", "decade", "month", "anomaly", "id")))
+    }
+  ) |>
+  dplyr::bind_rows() |>
+  write_anomaly(name = "anom_month_decade")
 ```
 
 
-```{r}
+Plot a grid of monthly spatial anomalies by decade for just the "total_10m2" species.  You have to squint!
 
-ggplot(dy) +
-  geom_sf(color = "white", aes(fill = dvalue)) +
+```{r plot_anom_decade, out.width = "100%"}
+spp = "total_10m2"
+ggplot(anom_decade |> filter(name == spp)) +
+  geom_sf(color = "white", aes(fill = anomaly)) +
   geom_sf(data = coast) + 
   scale_fill_distiller(palette = "Spectral", na.value = NA, type = "div") +
-  facet_grid(name ~ decade)
+  facet_grid(decade ~ month) + 
+  theme(axis.text = element_blank())
 ```
 
-# Monthly climatologies
 
-Here we compute means by month for each species (and the total.)  
+We can also plot one polygon as a heat map.
 
-`ma` = mean of abundance 
+```{r plot_decade_heatmap}
+poly_id = 42
+dec = as.numeric(decadestarts)
+ggplot(data = anom_decade |> 
+         st_drop_geometry() |>
+         filter(name == spp, id == poly_id) |>
+         mutate(decade = as.numeric(decade)),
+       mapping = aes(month, decade)) + 
+  geom_tile(aes(fill = anomaly), colour = "white") +
+  lims(y = rev(range(dec) + c(-5,5))) + 
+  labs(title = sprintf("spp: %s, interval: decade, polygon: %i",
+                       spp, poly_id)) + 
+ scale_fill_distiller(palette = "Spectral", na.value = NA, type = "div")
 
-`sda` = standard deviation of abundance
+```
 
-```{r}
-ma = x |>
-  group_by(name, month) |>
+
+## Monthly anomalies by year
+
+```{r anom_year}
+geom_col = attr(h, "sf_column")
+anom_year = x |>
+  group_by(name, month, year) |>
   group_map(
     function(tbl, key){
-      tally_by_poly(tbl, h, fun = mean, na.rm = TRUE, shape = "long") |>
-        dplyr::mutate(name = key$name, month = key$month, .before = 1)
-    }
-  ) |>
-  dplyr::bind_rows()
-```
-
-
-```{r}
-sda = x |>
-  group_by(name, month) |>
-  group_map(
-    function(tbl, key){
-      tally_by_poly(tbl, h, fun = sd, na.rm = TRUE, shape = "long") |>
-        dplyr::mutate(name = key$name, month = key$month, .before = 1)
-    }
-  ) |>
-  dplyr::bind_rows()
-```
-
-`y` is the monthly mean per decade
-
-```{r}
-y = x |>
-  group_by(name, decade, month) |>
-  group_map(
-    function(tbl, key){
-      tally_by_poly(tbl, h, fun = mean, na.rm = TRUE, shape = "long") |>
-        dplyr::mutate(name = key$name, decade = key$decade, month = key$month, .before = 1)
-    }
-  ) |>
-  dplyr::bind_rows()
-```
-
-And here we find the departure from the monthly mean for each decade in standard deviations.
-
-```{r}
-dy = y |>
-  dplyr::group_by(name, decade, month) |>
-  dplyr::group_map(
-    function(tbl, key){
-      # (value - ma)/sd
-      ltm =  dplyr::filter(ma,  name == key$name, month == key$month) |>
-        dplyr::pull(dplyr::all_of("value"))
-      std = dplyr::filter(sda,  name == key$name,   month == key$month) |>
-        dplyr::pull(dplyr::all_of("value"))
-      dplyr::mutate(tbl, 
+      m = tally_by_poly(tbl, h, fun = mean, na.rm = TRUE) |>
+        dplyr::pull(var = 1)
+      s = summa_mon |>
+        dplyr::filter(name == key$name, month == key$month)
+      dplyr::mutate(h,
                     name = key$name,
-                    dvalue = (tbl$value - ltm)/std, 
+                    year = key$year,
                     month = key$month,
-                    decade = key$decade, 
-                    .after = dplyr::all_of("value"))  
-    } ) |>
-  dplyr::bind_rows()
+                    anomaly = (m - s$mean)/s$sdev, 
+                    .before = dplyr::all_of(geom_col)) |>
+      dplyr::select(dplyr::all_of(c("name", "year", "month", "anomaly", "id")))
+    }
+  ) |>
+  dplyr::bind_rows() |>
+   write_anomaly(name = "anom_month_year")
 ```
 
-We plot these in a series by species.
-```{r monthly plots, out.width="100%"}
-spp = count(dy, name) |> pull(var = 1)
-sppname = sub("_10m2", "", spp, fixed = TRUE)
-gg = lapply(seq_along(spp),
-  function(i){
-    ggplot(data = filter(dy, name == spp[i])) +
-      geom_sf(color = "white", aes(fill = dvalue)) +
-      geom_sf(data = coast) + 
-      scale_fill_distiller(palette = "Spectral", na.value = NA, type = "div") +
-      labs(fill = sppname[i]) + 
-      facet_grid(decade ~ month) + 
-      theme(axis.text = element_blank())
-  })
-for (g in gg) print(g)
-```
+And plot a heatmap.
 
+```{r plot_anom_year}
+ggplot(data = anom_year |> 
+         st_drop_geometry() |>
+         filter(name == spp, id == poly_id) |>
+         mutate(year = as.numeric(year)),
+       mapping = aes(month, year)) + 
+  geom_tile(aes(fill = anomaly), colour = "white") +
+  lims(y = rev(range(years) + c(-5,5))) + 
+  labs(title = sprintf("spp: %s, interval: decade, polygon: %i",
+                       spp, poly_id)) + 
+ scale_fill_distiller(palette = "Spectral", na.value = NA, type = "div")
+```
 

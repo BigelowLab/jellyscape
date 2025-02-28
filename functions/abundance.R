@@ -1,6 +1,6 @@
+
 tally_by_poly = function(x, y, fun = sum,
                          na.rm = TRUE,
-                         transform = NULL, 
                          ...){
 
   #' Compute abundance across a set of polygons (like hexagons)
@@ -9,7 +9,6 @@ tally_by_poly = function(x, y, fun = sum,
   #' @param y spatial polygons
   #' @param fun name of the function to apply
   #' @param ... other arguments for fun
-  #' @param transform a function for transforming the results
   #' @return sf table of aggregate per polygon
     
     value= st_contains(y, x) |>
@@ -25,7 +24,6 @@ tally_by_poly = function(x, y, fun = sum,
           }
         }, x = x )
     
-    if(!is.null(transform)) value = transform(value)
     
     y |>
       dplyr::mutate(value = value, .before = 1)
@@ -36,7 +34,6 @@ tally_by_poly = function(x, y, fun = sum,
 tally_abundance = function(x = read_ecomon_spp(form = 'sf') |> ecomon_to_long(), 
                            y = read_hexbin(), 
                            fun = sum,
-                           transform = NULL, 
                            na.rm = TRUE,
                            shape = "long"){
   
@@ -46,7 +43,6 @@ tally_abundance = function(x = read_ecomon_spp(form = 'sf') |> ecomon_to_long(),
   #' @param y spatial polygons
   #' @param fun name of the function to apply
   #' @param ... other arguments for fun
-  #' @param transform a function for transforming the results
   #' @param shape chr one of "long" (default) or "wide"
   #' @return sf table of aggregate per polygon
   
@@ -55,12 +51,12 @@ tally_abundance = function(x = read_ecomon_spp(form = 'sf') |> ecomon_to_long(),
     dplyr::select(dplyr::all_of(c("name", "value"))) |>
     dplyr::group_by(name) |>
     dplyr::group_map(
-      function(tbl, key, fun = NULL, transform = NULL, na.rm = NULL){
-        tally_by_poly(tbl, y, fun = fun, transform = transform, na.rm = na.rm) |>
+      function(tbl, key, fun = NULL,  na.rm = NULL){
+        tally_by_poly(tbl, y, fun = fun, na.rm = na.rm) |>
           dplyr::mutate(name = key$name, .before = 1) 
-      }, fun = fun, transform = transform, na.rm = na.rm) |>
+      }, fun = fun, na.rm = na.rm) |>
     dplyr::bind_rows() |>
-    dplyr::relocate(dplyr::all_of(geom_col), .after = dplyr::last_col())
+    dplyr::relocate(dplyr::all_of(c("id", geom_col)), .after = dplyr::last_col())
   
     if (tolower(shape[1]) == "wide"){
       r = wider_abundance(r)
