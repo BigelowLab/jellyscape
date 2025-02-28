@@ -19,7 +19,7 @@ decades = seq(as.Date("1970-01-01"), as.Date("2020-01-01"), by = "10 years")
 decadestarts = format(decades, "%Y")
 x = read_ecomon_spp(form = 'sf') |> ecomon_to_long()
 
-years = unique(x$year) |> as.numeric() |> sort()
+years = format(x$date, "%Y") |> unique() |> as.numeric() |> sort()
 
 sf_col = attr(x, "sf_column")
 x = x |>
