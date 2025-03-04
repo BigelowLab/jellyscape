@@ -64,7 +64,7 @@
     "href": "07_changes.html",
     "title": "07_changes",
     "section": "",
-    "text": "Here we look a changes over time for individual species as well as for the aggregate. We bin abundance into a hexagonal mesh covering the area, compute long term means and the examine trends over time relative to each long-term mean.\nCode\ndecades = seq(as.Date(\"1970-01-01\"), as.Date(\"2020-01-01\"), by = \"10 years\")\ndecadestarts = format(decades, \"%Y\")\nx = read_ecomon_spp(form = 'sf') |&gt; ecomon_to_long()\n\nyears = format(x$date, \"%Y\") |&gt; unique() |&gt; as.numeric() |&gt; sort()\n\nsf_col = attr(x, \"sf_column\")\nx = x |&gt;\n  dplyr::mutate(year = format(date, \"%Y\"),\n                month = format(date, \"%b\") |&gt; factor(levels = month.abb),\n                decade = decadestarts[findInterval(.data$date, decades)],\n                .before = dplyr::all_of(sf_col))\nh = read_hexgrid()\ncoast = read_coast()\nHere’s a plot of the hexagonal grid, enumerated from lower left to upper right.\nCode\nplot(sf::st_geometry(x), pch = \".\", axes = TRUE, reset = FALSE, main = \"All records\")\nplot(sf::st_geometry(h), border = \"gray\", add = TRUE)\ntext(h, labels = h$id, cex = 0.7, col = \"pink\")\nplot(coast, col = \"orange\", add = TRUE)",
+    "text": "Here we look a changes over time for individual species as well as for the aggregate. We bin abundance into a hexagonal mesh covering the area, compute long term means and the examine trends over time relative to each long-term mean.\nCode\nx = read_ecomon_spp(form = 'sf', post = \"long-extras\") \ny = read_hexgrid()\ncoast = read_coast()\nHere’s a plot of the hexagonal grid, enumerated from lower left to upper right.\nCode\nplot(sf::st_geometry(x), pch = \".\", axes = TRUE, reset = FALSE, main = \"All records\")\nplot(sf::st_geometry(y), border = \"gray\", add = TRUE)\ntext(y, labels = y$id, cex = 0.7, col = \"pink\")\nplot(coast, col = \"orange\", add = TRUE)",
     "crumbs": [
       "Changes over time"
     ]
@@ -93,8 +93,8 @@
     "objectID": "07_changes.html#decadal-anomalies",
     "href": "07_changes.html#decadal-anomalies",
     "title": "07_changes",
-    "section": "3.1 Decadal anomalies",
-    "text": "3.1 Decadal anomalies\nHere we look at decadal abundance departures from the long term mean.\n\n\nCode\ngeom_col = attr(h, \"sf_column\")\nnh = nrow(h)\nanom_decade = x |&gt;\n  group_by(name, month, decade) |&gt;\n  group_map(\n    function(tbl, key){\n      m = tally_by_poly(tbl, h, fun = mean, na.rm = TRUE) |&gt;\n        dplyr::pull(var = 1)\n      s = summa_mon |&gt;\n        dplyr::filter(name == key$name, month == key$month)\n      dplyr::mutate(h,\n                    name = key$name,\n                    decade = key$decade,\n                    month = key$month,\n                    anomaly = (m - s$mean)/s$sdev, \n                    .before = dplyr::all_of(geom_col)) |&gt;\n      dplyr::select(dplyr::all_of(c(\"name\", \"decade\", \"month\", \"anomaly\", \"id\")))\n    }\n  ) |&gt;\n  dplyr::bind_rows() |&gt;\n  write_anomaly(name = \"anom_month_decade\")\n\n\nPlot a grid of monthly spatial anomalies by decade for just the “total_10m2” species. You have to squint!\n\n\nCode\nspp = \"total_10m2\"\nggplot(anom_decade |&gt; filter(name == spp)) +\n  geom_sf(color = \"white\", aes(fill = anomaly)) +\n  geom_sf(data = coast) + \n  scale_fill_distiller(palette = \"Spectral\", na.value = NA, type = \"div\") +\n  facet_grid(decade ~ month) + \n  theme(axis.text = element_blank())\n\n\n\n\n\n\n\n\n\nWe can also plot one polygon as a heat map.\n\n\nCode\npoly_id = 42\ndec = as.numeric(decadestarts)\nggplot(data = anom_decade |&gt; \n         st_drop_geometry() |&gt;\n         filter(name == spp, id == poly_id) |&gt;\n         mutate(decade = as.numeric(decade)),\n       mapping = aes(month, decade)) + \n  geom_tile(aes(fill = anomaly), colour = \"white\") +\n  lims(y = rev(range(dec) + c(-5,5))) + \n  labs(title = sprintf(\"spp: %s, interval: decade, polygon: %i\",\n                       spp, poly_id)) + \n scale_fill_distiller(palette = \"Spectral\", na.value = NA, type = \"div\")",
+    "section": "4.1 Decadal anomalies",
+    "text": "4.1 Decadal anomalies\nHere we look at decadal abundance departures from the long term mean.\n\n\nCode\nanom_decade = compute_anomaly(x, y, summa = summa_decade, by = \"decade\")\n\n\nPlot a grid of monthly spatial anomalies by decade for just the “total_10m2” species. You have to squint!\n\n\nCode\nspp = \"total_10m2\"\nggplot(anom_decade |&gt; filter(name == spp)) +\n  geom_sf(color = \"white\", aes(fill = anomaly)) +\n  geom_sf(data = coast) + \n  scale_fill_distiller(palette = \"Spectral\", na.value = NA, type = \"div\") +\n  facet_grid(decade ~ month) + \n  theme(axis.text = element_blank())\n\n\n\n\n\n\n\n\n\nWe can also plot one polygon as a heat map.\n\n\nCode\nplot_anomaly_by_poly(anom_decade, ids = 42)",
     "crumbs": [
       "Changes over time"
     ]
@@ -105,6 +105,16 @@
     "title": "07_changes",
     "section": "3.2 Monthly anomalies by year",
     "text": "3.2 Monthly anomalies by year\n\n\nCode\ngeom_col = attr(h, \"sf_column\")\nanom_year = x |&gt;\n  group_by(name, month, year) |&gt;\n  group_map(\n    function(tbl, key){\n      m = tally_by_poly(tbl, h, fun = mean, na.rm = TRUE) |&gt;\n        dplyr::pull(var = 1)\n      s = summa_mon |&gt;\n        dplyr::filter(name == key$name, month == key$month)\n      dplyr::mutate(h,\n                    name = key$name,\n                    year = key$year,\n                    month = key$month,\n                    anomaly = (m - s$mean)/s$sdev, \n                    .before = dplyr::all_of(geom_col)) |&gt;\n      dplyr::select(dplyr::all_of(c(\"name\", \"year\", \"month\", \"anomaly\", \"id\")))\n    }\n  ) |&gt;\n  dplyr::bind_rows() |&gt;\n   write_anomaly(name = \"anom_month_year\")\n\n\nAnd plot a heatmap.\n\n\nCode\nggplot(data = anom_year |&gt; \n         st_drop_geometry() |&gt;\n         filter(name == spp, id == poly_id) |&gt;\n         mutate(year = as.numeric(year)),\n       mapping = aes(month, year)) + \n  geom_tile(aes(fill = anomaly), colour = \"white\") +\n  lims(y = rev(range(years) + c(-5,5))) + \n  labs(title = sprintf(\"spp: %s, interval: decade, polygon: %i\",\n                       spp, poly_id)) + \n scale_fill_distiller(palette = \"Spectral\", na.value = NA, type = \"div\")",
+    "crumbs": [
+      "Changes over time"
+    ]
+  },
+  {
+    "objectID": "07_changes.html#monthly-anomalies",
+    "href": "07_changes.html#monthly-anomalies",
+    "title": "07_changes",
+    "section": "4.2 Monthly anomalies",
+    "text": "4.2 Monthly anomalies\n\n\nCode\nanom_mon = monthly_anomaly(x, y, summa = summa_mon)\n\n\nAnd plot a heatmap.\n\n\nCode\nheatmap_monthly_anomaly_by_poly(anom_mon, spp = \"total_10m2\", id = 42)",
     "crumbs": [
       "Changes over time"
     ]

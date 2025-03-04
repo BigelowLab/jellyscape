@@ -25,3 +25,17 @@ make_path = function(path){
   if (!ok) ok = dir.create(path, recursive = TRUE)
   path
 }
+
+
+filter_by_key = function(x = iris, key = dplyr::tibble(Species = "setosa")){
+  #' A function to aid debugging, filter `x` by the values in `key`
+  #' @param x a table of data
+  #' @param key a table used to filter x.  Column names in `key` must be matched
+  #'   by column names in `x`
+  #' @return a filtered version of `x`
+  for (nm in colnames(key)){
+    nmSym = rlang::sym(nm)
+    x = x |> dplyr::filter({{nmSym}} %in% key[[nm]])
+  }
+  x
+}

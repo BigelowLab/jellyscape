@@ -1,85 +1,3 @@
-ninenum = function(x, na.rm = TRUE){
-  
-  #' Given a set of values compute the standard summary of 
-  #' `[n, min, q25, median, mean, sdev, q75, max, sum]`.
-  #' 
-  #' @param x numeric vector of values
-  #' @param na.rm logical, if TRUE remove NA values before computing summaries. If TRUE then
-  #'  `n` will indicate the number of non-NA values in `x`, otherwise it will indicate
-  #'  length of input `x`.
-  #' @return named vector of summary values
-  
-  len = length(x)
-  if (len == 0){
-    eight = c(len, rep(NA_real_, 8))
-  } else {
-    len = if (na.rm) sum(!is.na(x)) else len
-    s = sum(x, na.rm = na.rm)
-    m = mean(x, na.rm = na.rm)
-    std = sd(x, na.rm = na.rm)
-    r = fivenum(x, na.rm = na.rm)
-    eight = c(len, r[1:3], m, std, r[4:5], s)
-  }
-  eight |>
-    rlang::set_names(c("n", "min", "q25", "median", "mean", "sdev", "q75", "max", "sum"))
-}
-
-
-eightnum = function(x, na.rm = TRUE){
-  
-  #' Given a set of values compute the standard summary of 
-  #' `[n, min, q25, median, mean, sdev, q75, max]`.
-  #' 
-  #' @param x numeric vector of values
-  #' @param na.rm logical, if TRUE remove NA values before computing summaries. If TRUE then
-  #'  `n` will indicate the number of non-NA values in `x`, otherwise it will indicate
-  #'  length of input `x`.
-  #' @return named vector of summary values
-  
-  len = length(x)
-  if (len == 0){
-    eight = c(len, rep(NA_real_, 7))
-  } else {
-    len = if (na.rm) sum(!is.na(x)) else len
-    m = mean(x, na.rm = na.rm)
-    std = sd(x, na.rm = TRUE)
-    r = fivenum(x, na.rm = na.rm)
-    eight = c(len, r[1:3], m, std, r[4:5])
-  }
-  eight |>
-    rlang::set_names(c("n", "min", "q25", "median", "mean", "sdev", "q75", "max"))
-}
-
-
-
-sevennum = function(x, na.rm = TRUE){
-  
-  #' Given a set of values compute the standard summary of 
-  #' `[n, min, q25, median, mean, q75, max]`.
-  #' 
-  #' @param x numeric vector of values
-  #' @param na.rm logical, if TRUE remove NA values before computing summaries. If TRUE then
-  #'  `n` will indicate the number of non-NA values in `x`, otherwise it will indicate
-  #'  length of input `x`.
-  #' @return named vector of summary values
-  
-  len = length(x)
-  if (len == 0){
-    seven = c(len, rep(NA_real_, 6))
-  } else {
-    len = if (na.rm) sum(!is.na(x)) else len
-    m = mean(x, na.rm = na.rm)
-    r = fivenum(x, na.rm = na.rm)
-    seven = c(len, r[1:3], m, r[4:5])
-  }
-  seven |>
-    rlang::set_names(c("n", "min", "q25", "median", "mean", "q75", "max"))
-}
-
-
-
-
-
 summary_by_poly = function(x, y,
                            fun = ninenum,
                            na.rm = TRUE){
@@ -107,6 +25,44 @@ summary_by_poly = function(x, y,
   dplyr::bind_cols(y,value) |>
     dplyr::relocate(dplyr::all_of(c("id", geom_col)), .after = dplyr::last_col())
 }
+
+which_period = function(x, choices= c("month", "year", "decade")){
+  
+  choices[choices %in% colnames(x)]
+}
+
+
+plot_summary_by_poly = function(x, 
+                                ids = 42,
+                                by = which_period(x)){
+  #' Plot the anomalies for a specified polygon(s)
+  #' @param x anomalies table by month or decade
+  #' @param ids num, one or more ids to plot
+  #' @param by chr either "decade" or "year" but auto detected from `x` variable names
+  bySym = rlang::sym(by)
+  
+  y = longer_summary(x) |>
+    sf::st_drop_geometry() |>
+    dplyr::filter(id %in% ids,
+                  sname %in% c("mean", "median", "q75", "max")) |>
+    dplyr::mutate(sname = factor(.data$sname, levels = c("max", "q75", "median", "mean")))
+
+  if (by == "month") y = dplyr::mutate(y, month = as.numeric(.data$month))
+  
+  gg = ggplot2::ggplot(data = y,
+                  mapping = aes(x = {{bySym}}, y = value, color = sname)) +
+    geom_line() + 
+    facet_wrap(~ id + name)
+  
+  if (by == "month") gg = gg + ggplot2::scale_x_continuous(breaks = 1:12, 
+                                                           labels = substring(month.abb,1,1))
+  
+  gg
+  
+}
+
+
+
 
 summary_abundance = function(x = read_ecomon_spp(form = 'sf') |> ecomon_to_long(), 
                              y = read_hexbin(), 
@@ -137,6 +93,37 @@ summary_abundance = function(x = read_ecomon_spp(form = 'sf') |> ecomon_to_long(
   
   if (tolower(shape[1]) == "long"){
     r = longer_summary(r)
+  }
+  r
+}
+
+
+
+compute_summary = function(x = read_ecomon_spp(form = 'sf', post = "long-extras") ,
+                           by = c("month", "decade", "longterm")[1],
+                           y = read_hexgrid(),
+                           ...){
+  #' Compute a summary for various intervals ("month", "decade", etc)
+  #' @param x long form data data with 'month', 'year' and 'decade'
+  #' @param by chr the interval for summarizing
+  #' @param y the polygons (likely hexgrid) over which to compute
+  #' @param ... arguments for summary_by_poly
+  #' @return spatial summary table by polygon
+  
+  r = if (tolower(by[1] == "longterm")){
+    summary_abundance(x, y = y, ...)
+  } else {
+    x |> 
+      dplyr::group_by(name, across(all_of(by))) |>
+      dplyr::group_map(
+        function(tbl, key){
+          summary_by_poly(tbl, y, ...) |>
+            dplyr::mutate(name = key$name, 
+                          #{{bySym}} := key[[by]], 
+                          !!by := key[[by]],
+                          .before = 1)
+        }  ) |>
+      dplyr::bind_rows()
   }
   r
 }

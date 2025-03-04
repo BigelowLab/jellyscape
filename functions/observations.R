@@ -60,7 +60,8 @@ read_ecomon_spp = function(groups = names(default_groups()),
                            select_vars = names(default_vars()),
                            agg = TRUE,
                            transform = log1p,
-                           form = c("table", "sf")[1]){
+                           form = c("table", "sf")[1],
+                           post = c("none", "long", "long-extras")[1]){
   
   #' Read ecomon data for favored species (groups)
   #' 
@@ -70,6 +71,8 @@ read_ecomon_spp = function(groups = names(default_groups()),
   #' @param agg logical, if TRUE and \code{per} is not "any" then sum the metrics
   #' @param transform NULL or function, if function apply to abundances (such as log1p or log)
   #' @param form chr, one of "table" or "sf"
+  #' @param post chr, postprocessing one of "none", "long" to pivot to long form or 
+  #'   "long-extras" to pivot and add extras such as decade, year and month
   #' @return table or sf table
   #' 
   x = ecomon::read_ecomon(simplify = FALSE) |>
@@ -103,6 +106,18 @@ read_ecomon_spp = function(groups = names(default_groups()),
     x = ecomon_as_sf(x)
   }
   
+  
+  x = switch(tolower(post[1]),
+             "long" = ecomon_to_long(x),
+             "long-extras" = 
+               {
+                 ecomon_to_long(x) |>
+                   dplyr::mutate(year = format(date, "%Y") |> as.numeric(),
+                                 month = format(date, "%b") |> factor(levels = month.abb),
+                                 decade = floor(year/10) * 10,
+                                 .before = dplyr::last_col())
+               },
+             x)
   x
 }
 
@@ -138,7 +153,9 @@ ecomon_to_long = function(x = read_ecomon_spp( form = "table")){
                             dplyr::any_of(colnames(x)[ia]))
   }
   
-  x = dplyr::mutate(x, longname = as_longname(.data$name), .before = dplyr::all_of("name"))
+  x = dplyr::mutate(x, 
+                    longname = as_longname(.data$name), 
+                    .before = dplyr::all_of("name"))
   
   x
 }
