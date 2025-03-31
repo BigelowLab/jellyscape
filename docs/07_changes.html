@@ -211,7 +211,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#standardized-anomalies" id="toc-standardized-anomalies" class="nav-link" data-scroll-target="#standardized-anomalies"><span class="header-section-number">4</span> Standardized anomalies</a>
   <ul class="collapse">
   <li><a href="#decadal-anomalies" id="toc-decadal-anomalies" class="nav-link" data-scroll-target="#decadal-anomalies"><span class="header-section-number">4.1</span> Decadal anomalies</a></li>
-  <li><a href="#monthly-anomalies" id="toc-monthly-anomalies" class="nav-link" data-scroll-target="#monthly-anomalies"><span class="header-section-number">4.2</span> Monthly anomalies</a></li>
+  <li><a href="#monthly-anomalies" id="toc-monthly-anomalies" class="nav-link" data-scroll-target="#monthly-anomalies"><span class="header-section-number">4.2</span> Monthly anomalies</a>
+  <ul class="collapse">
+  <li><a href="#plot-a-heat-map" id="toc-plot-a-heat-map" class="nav-link" data-scroll-target="#plot-a-heat-map"><span class="header-section-number">4.2.1</span> Plot a heat map</a></li>
+  <li><a href="#plot-a-time-series" id="toc-plot-a-time-series" class="nav-link" data-scroll-target="#plot-a-time-series"><span class="header-section-number">4.2.2</span> Plot a time series</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -451,6 +455,8 @@ $ geom   &lt;POLYGON [°]&gt; POLYGON ((-75.97 33.88935, ..., POLYGON ((-75.97 3
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>anom_mon <span class="ot">=</span> <span class="fu">monthly_anomaly</span>(x, y, <span class="at">summa =</span> summa_mon)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+<section id="plot-a-heat-map" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="plot-a-heat-map"><span class="header-section-number">4.2.1</span> Plot a heat map</h3>
 <p>And plot a heatmap.</p>
 <div class="cell">
 <details class="code-fold">
@@ -465,8 +471,25 @@ $ geom   &lt;POLYGON [°]&gt; POLYGON ((-75.97 33.88935, ..., POLYGON ((-75.97 3
 </div>
 </div>
 </div>
+</section>
+<section id="plot-a-time-series" class="level3" data-number="4.2.2">
+<h3 data-number="4.2.2" class="anchored" data-anchor-id="plot-a-time-series"><span class="header-section-number">4.2.2</span> Plot a time series</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_monthly_anomaly_ts</span>(anom_mon, <span class="at">spp =</span> <span class="fu">c</span>(<span class="st">"total_10m2"</span>, <span class="st">"coel_10m2"</span>, <span class="st">"salps_10m2"</span>), <span class="at">ids =</span> <span class="fu">c</span>(<span class="dv">38</span>,<span class="dv">42</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="07_changes_files/figure-html/plot_time_series-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
+</section>
 </section>
 </section>
 

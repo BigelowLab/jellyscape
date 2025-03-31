@@ -67,6 +67,67 @@ heatmap_monthly_anomaly_by_poly = function(x, spp = "total_10m2", ids = 42,
 }
 
 
+map_monthly_anomaly_by_date = function(x,
+                               date = "1995-12-18",
+                               coast = read_coast(),
+                               zlim = c(-2,2)){
+  
+  if (!inherits(date, "Date")) date = as.Date(date)
+  
+  dates = x$date |> range()
+  dates = seq(dates[1], dates[2], by = "month")
+  ix = findInterval(date, dates)
+  thedate = dates[ix]
+  x = dplyr::filter(x, .data$date == thedate)
+  
+  gg = ggplot2::ggplot(data = x) +
+    ggplot2::geom_sf(color = "white", ggplot2::aes(fill = anomaly)) +
+    ggplot2::geom_sf(data = coast) + 
+    ggplot2::labs(title = format(thedate, "%Y-%b")) + 
+    ggplot2::scale_fill_distiller(palette = "RdYlBu", na.value = NA, 
+                          type = "div", limits = zlim) +
+    ggplot2::theme(axis.text = ggplot2::element_blank())
+  
+  if (nrow(x) > 0) gg = gg + ggplot2::facet_wrap(~ name)
+  
+  gg
+  
+}
+
+
+
+plot_monthly_anomaly_ts = function(x,
+                                spp = "total_10m2",
+                                ids = 42, 
+                                ylim = list("auto", c(-3,3))[[1]]){
+  #' Plot a time series for one or more polygons with one or more species
+  #' 
+  #' @param x table of monthly anomalies
+  #' @param spp chr one or more species names
+  #' @param ids one or more polygon ids
+  #' @param ylim 
+  
+  
+  d = dplyr::filter(x, name %in% spp, id %in% ids) |>
+    dplyr::mutate(id = as.character(id)) |>
+    dplyr::select(date, name, id, anomaly) |>
+    dplyr::group_by(name, id) |>
+    tidyr::drop_na()
+  
+  if (ylim[1] == "auto"){
+    ylim = range(d$anomaly, na.rm = TRUE)
+  }
+  
+  ggplot2::ggplot(
+    data = d,
+    mapping = ggplot2::aes(x = date, y = anomaly, color = name)) +
+    geom_point(alpha = 0.7) + 
+    lims(y = ylim) + 
+    labs(title = paste(spp, collapse = ",")) + 
+    geom_smooth(method = "lm", formula = y ~ x) + 
+    facet_wrap(~ id)
+}
+
 anom_time_col = function(x = read_anomaly(name = "anom_mean_decade"),
                          choices = c("year", "decade")){
   #' Guess the correct anomaly interval

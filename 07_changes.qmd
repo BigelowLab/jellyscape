@@ -123,9 +123,17 @@ anom_mon = monthly_anomaly(x, y, summa = summa_mon)
 ```
 
 
+### Plot a heat map 
+
 And plot a heatmap.
 
 ```{r plot_anom_month}
 heatmap_monthly_anomaly_by_poly(anom_mon, spp = "total_10m2", id = 42)
+```
+
+### Plot a time series
+
+```{r plot_time_series}
+plot_monthly_anomaly_ts(anom_mon, spp = c("total_10m2", "coel_10m2", "salps_10m2"), ids = c(38,42))
 ```
 

@@ -114,7 +114,7 @@
     "href": "07_changes.html#monthly-anomalies",
     "title": "07_changes",
     "section": "4.2 Monthly anomalies",
-    "text": "4.2 Monthly anomalies\n\n\nCode\nanom_mon = monthly_anomaly(x, y, summa = summa_mon)\n\n\nAnd plot a heatmap.\n\n\nCode\nheatmap_monthly_anomaly_by_poly(anom_mon, spp = \"total_10m2\", id = 42)",
+    "text": "4.2 Monthly anomalies\n\n\nCode\nanom_mon = monthly_anomaly(x, y, summa = summa_mon)\n\n\n\n4.2.1 Plot a heat map\nAnd plot a heatmap.\n\n\nCode\nheatmap_monthly_anomaly_by_poly(anom_mon, spp = \"total_10m2\", id = 42)\n\n\n\n\n\n\n\n\n\n\n\n4.2.2 Plot a time series\n\n\nCode\nplot_monthly_anomaly_ts(anom_mon, spp = c(\"total_10m2\", \"coel_10m2\", \"salps_10m2\"), ids = c(38,42))",
     "crumbs": [
       "Changes over time"
     ]

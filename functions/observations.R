@@ -61,7 +61,8 @@ read_ecomon_spp = function(groups = names(default_groups()),
                            agg = TRUE,
                            transform = log1p,
                            form = c("table", "sf")[1],
-                           post = c("none", "long", "long-extras")[1]){
+                           post = c("none", "long", "long-extras")[1],
+                           bypass = NA_character_){
   
   #' Read ecomon data for favored species (groups)
   #' 
@@ -73,8 +74,22 @@ read_ecomon_spp = function(groups = names(default_groups()),
   #' @param form chr, one of "table" or "sf"
   #' @param post chr, postprocessing one of "none", "long" to pivot to long form or 
   #'   "long-extras" to pivot and add extras such as decade, year and month
+  #' @param bypass chr or NA.  If not NA, then read another file directly thus 
+  #'   bypassing all other arguments except `groups`. Currently only "copernicus" is known beyond NA. 
   #' @return table or sf table
-  #' 
+  
+  if (!is.na(bypass)){
+    x = switch(tolower(bypass[1]),
+               "copernicus" = {
+                  filename = here::here("data", "copernicus", "ecomon_abundance.gpkg")
+                  x = sf::read_sf(filename)
+                  groups = paste0("[", paste(names(default_groups()), collapse = "|"), "]")
+                  ix = stringr::str_starts(x$name, groups)
+                  x = dplyr::filter(x, ix)
+                },
+               stop("bypass is not known: ", bypass))
+    return(x)
+  }
   x = ecomon::read_ecomon(simplify = FALSE) |>
     dplyr::select(dplyr::any_of(select_vars), dplyr::starts_with(groups)) 
   
