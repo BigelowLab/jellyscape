@@ -3,8 +3,8 @@ title: "Testing the Jelly Ocean Hypothesis in the Gulf of Maine"
 author: "Nicholas R. Record, Benjamin Tupper"
 date: 
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 bibliography: bibliography.bib
 ---
 
@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Introduction
 
-[This is from an old manuscript draft... will update ] For the past century, a “crustaceocentric” view has dominated zooplankton ecology in the ocean (Haddock 2004). The study of gelatinous species, collectively termed gelata, has been comparatively underemphasized. Recently, gelata have reentered the spotlight, following conspicuous blooms that have damaged fisheries (Kideys et al. 2005), aquaculture (ref), energy production (Seshadri et al. 2000), and recreation (ref). In addition to motivating new research on gelata, these recent events have raised the question of whether gelata have an increasing presence in a changing ocean.
+[This is from an old manuscript draft... will update testing] For the past century, a “crustaceocentric” view has dominated zooplankton ecology in the ocean (Haddock 2004). The study of gelatinous species, collectively termed gelata, has been comparatively underemphasized. Recently, gelata have reentered the spotlight, following conspicuous blooms that have damaged fisheries (Kideys et al. 2005), aquaculture (ref), energy production (Seshadri et al. 2000), and recreation (ref). In addition to motivating new research on gelata, these recent events have raised the question of whether gelata have an increasing presence in a changing ocean.
 
 The Jelly Ocean Hypothesis posits that gelatinous zooplankton populations are increasing worldwide as a result of changing ocean conditions, primarily due to anthropogenic activities. A series of recent studies have argued that, due a multiplicity of causes, abundance of gelatinous species is growing. Proposed causes are primarily human-driven, including warming (ref), eutrophication, translocation (Kideys et al. 2005), overfishing, bottom trawling (Qui 2014), pollution, aquaculture, and acidification (Richardson & Gibbons 2008). There is also evidence that shifts toward dominance of gelata are difficult to reverse (Richardson et al. 2009). Testing the Jelly Ocean Hypothesis requires long time series (>20 years) of gelata abundances in order to compare to historical levels. The shortage of such datasets has left the Jelly Ocean Hypothesis largely unsupported (Condon et al. 2012). In lieu of time series, studies have used qualitative data such as news reports to demonstrate that gelata are increasing globally (Brotz 2011, Brotz et al. 2012). However, it is difficult to distinguish these perceived increases from annual or decadal fluctuations. A recent meta-analysis of time series showed that most perceived increases actually reflect a ~20 year cyclicity, with a worldwide upswing in the 1990s, coinciding with the increase in concern over gelata (Condon et al. 2013), although some notable long-term increases in gelata were not included in the analysis (e.g. Atkinson et al. 2004). The Jelly Ocean Hypothesis remains very much in debate (Sanz-Martín et al. 2016).
 
