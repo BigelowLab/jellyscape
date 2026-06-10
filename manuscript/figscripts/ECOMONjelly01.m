@@ -113,7 +113,7 @@ plotm(ECOMON(I,2),ECOMON(I,3),'.','color',[.6 .3 .3]);
 % axis([-77 -63 34 47])
 % 
 
-figure('position',[1           1        1131         715])
+figure('position',[1           1        1131         867])
 
 
 for s=1:length(species)
