@@ -1,0 +1,190 @@
+function ECOMONjelly01()
+
+addpath(genpath('~/Work/code/m-files'));
+
+years = 1977:2023;
+mons = 1:12;
+monnames = {'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'};
+salpidx=27;
+siphidx=60;
+coelidx=62;
+ctenidx=63;
+thecidx=81;
+spiridx=85;
+gymnidx=100;
+chaeidx=30;
+larvidx=21;
+
+species=[salpidx,siphidx,coelidx];%,ctenidx];%,thecidx,spiridx,gymnidx,chaeidx,larvidx];
+specnames={'Salps','Siphonophores','Coelenterates'}%,'Ctenophores'};
+
+
+load ~/Work/Data/ECOMON/EcoMon_Plankton_Data_v3_10.mat
+
+GB=[      -69.052       41.018
+      -68.636       41.528
+       -67.99       42.011
+      -67.324       42.233
+      -66.367       42.233
+      -65.607       41.893
+      -66.419       40.914
+      -67.241       40.405
+      -68.199       40.235
+      -69.177       39.961];
+
+GOM=[    -69.083       40.979
+      -68.428       41.724
+      -67.917       42.037
+      -67.387       42.207
+      -66.325       42.194
+      -66.242       42.951
+      -66.169       43.343
+      -66.387       44.192
+      -66.606       44.466
+       -67.48       44.518
+      -68.261       44.087
+      -69.104       44.035
+      -69.614       43.761
+      -70.176       43.682
+      -70.822       42.781
+      -70.915       42.363
+      -70.426       41.724
+      -69.989       41.854
+      -69.708       41.175
+      -69.104       40.901];
+
+NY=[     -69.128       39.774
+      -69.128       40.889
+      -69.725       41.172
+      -69.955       41.838
+      -74.501       41.122
+      -72.817       38.593
+      -71.485       39.625
+      -69.588       39.691];
+
+MAB=[-72.802       38.593
+      -74.455       41.072
+      -77.225       39.791
+      -77.669       36.929
+      -76.444       35.547
+      -75.052       35.048
+      -73.904       35.248
+      -73.031       36.479
+      -72.618       37.195
+      -72.633       37.944];
+
+figure('position',[1     1   549   681])
+h=worldmap([35 45],[-77 -65]);
+%geoshow(landAreasSubset)
+setm(h,'MapProjection','eckert1')
+geoshow('landareas.shp','FaceColor',[.8 .8 .8])
+hold on
+setm(gca,'FontSize',.18)
+setm(gca,'fontcolor','white')
+gridm('glinestyle','-','glinewidth',2)
+textm(34.3,-75.8,'  75°W                          70°W                         65°W','fontsize',20)
+textm(40,-65,' 40°N','fontsize',20)
+textm(35,-65,' 35°N','fontsize',20)
+textm(45,-65,' 45°N','fontsize',20)
+
+I=find(inpolygon(ECOMON(:,3),ECOMON(:,2),GB(:,1),GB(:,2)));
+plotm(ECOMON(I,2),ECOMON(I,3),'.','color',[.3 .3 .3]);
+I=find(inpolygon(ECOMON(:,3),ECOMON(:,2),GOM(:,1),GOM(:,2)));
+plotm(ECOMON(I,2),ECOMON(I,3),'.','color',[.3 .3 .6]);
+I=find(inpolygon(ECOMON(:,3),ECOMON(:,2),NY(:,1),NY(:,2)));
+plotm(ECOMON(I,2),ECOMON(I,3),'.','color',[.3 .6 .3]);
+I=find(inpolygon(ECOMON(:,3),ECOMON(:,2),MAB(:,1),MAB(:,2)));
+plotm(ECOMON(I,2),ECOMON(I,3),'.','color',[.6 .3 .3]);
+
+% alph=.1;
+% sz=16;
+% 
+% load coastlines.mat
+% plot(coastlon,coastlat,'k','LineWidth',3)
+% hold on
+% I=find(inpolygon(ECOMON(:,3),ECOMON(:,2),GB(:,1),GB(:,2)));
+% scatter(ECOMON(I,3),ECOMON(I,2),sz,'filled','color','b','markerfacealpha',alph)
+% I=find(inpolygon(ECOMON(:,3),ECOMON(:,2),GOM(:,1),GOM(:,2)));
+% scatter(ECOMON(I,3),ECOMON(I,2),sz,'filled','color','g','markerfacealpha',alph)
+% I=find(inpolygon(ECOMON(:,3),ECOMON(:,2),NY(:,1),NY(:,2)));
+% scatter(ECOMON(I,3),ECOMON(I,2),sz,'filled','color','r','markerfacealpha',alph)
+% I=find(inpolygon(ECOMON(:,3),ECOMON(:,2),MAB(:,1),MAB(:,2)));
+% scatter(ECOMON(I,3),ECOMON(I,2),sz,'filled','color','k','markerfacealpha',alph)
+% axis([-77 -63 34 47])
+% 
+
+figure('position',[1           1        1131         715])
+
+
+for s=1:length(species)
+    subplot(length(species),4,s*4-3)
+    Z_GB = ECOMONpresence(species(s),GB,years,mons);
+
+
+    ajpcolor(years,mons,Z_GB')
+    set(gca,'ytick',1:12,'yticklabel',monnames)
+    ax=axis;
+    axis([1974 ax(2:4)])
+    for m=1:12
+        [rh pv]=corr((1:47)',Z_GB(:,m),'rows','pairwise');
+        if pv<0.05 & rh>0
+            text(1974,m,'*','FontSize',16)
+        end
+    end
+    title('Georges Bank')
+    h=xlabel(specnames(s));hp=h.Position;
+    hp(1)=2100;hp(2)=15.2;
+    set(h,'position',hp,'FontWeight','bold','FontSize',12)
+
+
+    subplot(length(species),4,s*4-2)
+    Z_GOM = ECOMONpresence(species(s),GOM,years,mons);
+    
+    ajpcolor(years,mons,Z_GOM')
+    set(gca,'ytick',1:12,'yticklabel',monnames)
+    title('Gulf of Maine')
+    ax=axis;
+    axis([1974 ax(2:4)])
+    for m=1:12
+        [rh pv]=corr((1:47)',Z_GOM(:,m),'rows','pairwise');
+        if pv<0.05 & rh>0
+            text(1974,m,'*','FontSize',16)
+        end
+    end
+
+    subplot(length(species),4,s*4-1)
+    Z_NY = ECOMONpresence(species(s),NY,years,mons);
+    
+    ajpcolor(years,mons,Z_NY')
+    set(gca,'ytick',1:12,'yticklabel',monnames)
+    title('New York Bight')
+    ax=axis;
+    axis([1974 ax(2:4)])
+    for m=1:12
+        [rh pv]=corr((1:47)',Z_NY(:,m),'rows','pairwise');
+        if pv<0.05 & rh>0
+            text(1974,m,'*','FontSize',16)
+        end
+    end
+
+    subplot(length(species),4,s*4)
+    Z_MAB = ECOMONpresence(species(s),MAB,years,mons);
+    
+    ajpcolor(years,mons,Z_MAB')
+    set(gca,'ytick',1:12,'yticklabel',monnames)
+    title('Mid Atlantic Bight')
+    ax=axis;
+    axis([1974 ax(2:4)])
+    for m=1:12
+        [rh pv]=corr((1:47)',Z_MAB(:,m),'rows','pairwise');
+        if pv<0.05 & rh>0
+            text(1974,m,'*','FontSize',16)
+        end
+    end
+    %yyaxis('right')
+    %set(gca,'ytick',[])
+    
+
+end
+
+
