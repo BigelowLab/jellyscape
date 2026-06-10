@@ -1,5 +1,5 @@
 ---
-title: "The Jelly Ocean Hypothesis in the Northwest North Atlantic"
+title: "Examining the Jelly Ocean Hypothesis in the Northwest North Atlantic"
 author: "Nicholas R. Record, Benjamin Tupper, Omi Johnson"
 date: 
 output:
@@ -32,7 +32,7 @@ We revisited the Jelly Ocean Hypothesis using a 50-year spatial survey on the no
 
 ## Methods
 
-### Data
+### Survey Data
 
 The Northeast Fisheries Science Center Ecosystem Monitoring (ECOMON) program collects seasonal zooplankton measurements as part of its mission to monitor and assess the Northeast Continental Shelf ecosystem (Figure 1). Sampling includes oblique tows using a 61 cm bongo net fitted with a 333 µm mesh at stratified locations across the shelf (Figure 1). Tows are a minimum of five minutes in duration and sample from the surface to within 5 m of the seabed or to a maximum depth of 200 m. A mechanical flowmeter fitted in the mouth of each net is used to quantify volume sampled. Gelatinous zooplankton are identified into broad taxonomic groups, including siphonophores, ctenophores, salps, and coelenterates (i.e. scyphozoans). The broad grouping, while missing taxonomic detail has allowed for internal consistency over the duration of the survey. The analysis conducted here uses presence or absence of each taxonomic group.
 
@@ -40,12 +40,21 @@ The Northeast Fisheries Science Center Ecosystem Monitoring (ECOMON) program col
 
 ### Time series analysis
 
-The ECOMON survey has varied in frequency over its duration. To correct for biases, we followed the common approach of grouping by large spatial polygons that represent different habitats, and analyzed the time series by month. Polygons include: Gulf of Maine, Georges Bank, Southern New England, and Mid-Atlantic Bight [@walsh2015long]. Because of the low taxonomic resolution of gelatinous taxa and the bulk biomass quantification, we viewed measurements in a presence-absence context, tracking the percent of samples in a region and in a time period that contain presences. For each month, we tested for statistically significant increases over time using a bivarite correlation test against year.
-
-Regions
+The ECOMON survey has varied in frequency over its duration. To correct for biases, we followed the common approach of grouping by large spatial polygons that represent different habitats, and analyzed the time series by month. Polygons include: Gulf of Maine, Georges Bank, New York Bight, and Mid Atlantic Bight [@walsh2015long]. Because of the low taxonomic resolution of gelatinous taxa and the bulk biomass quantification, we viewed measurements in a presence-absence context, tracking the proportion of samples in a region and in a time period that contain presences. For each month and within each region, we tested for statistically significant increases over time using a bivarite correlation test against year.
 
 ### Spatial modeling
 
+To test for environmental associations with high or low occurrence of gelatinous taxa, we developed a species distribution model for each taxonomic group. We used environmental covariates from XYXYXcopernicus
+
+We used a boosted regression tree algorithm to fit the observations to environmental covariates. Boosted regression trees are well suited to variables that have sharp jumps or thresholds (Johnson et al. 2024), as is the case for the presence of gelatinous zooplankton, and is less prone to overfitting in species distribution models (Elith et al., 2008). We modeled each taxon using tidymodels workflows
+optimizing AUC?(Fielding and Bell, 1997)AUC
+was calculated using inbuilt tidymodels methods (Kuhn
+and Wickham, 2020)
+
+Hyperparameters.
+Cross validation
+Ensemble of runs used to quantify algorithmic uncertainty
+Response curves used to understand associations with environmental covariates
 
 
 ## Results

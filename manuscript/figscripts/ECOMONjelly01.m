@@ -188,3 +188,6 @@ for s=1:length(species)
 end
 
 
+h=subplotcb([0 1]);
+set(h,'ytick',[0 1])
+set(h,'FontSize',10)
