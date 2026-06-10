@@ -34,7 +34,9 @@ The Northeast Fisheries Science Center Ecosystem Monitoring (ECOMON) program col
 
 ### Time series analysis
 
-The ECOMON survey has varied in frequency over the duration of its lifetime. We followed the common approach of grouping by large spatial polygons that represent different habitats, and analyzed the time series in terms of climatologically-corrected monthly anomalies. Because of the low taxonomic resolution, we viewed measurements in a presence-absence context, tracking the percent of samples in a region and in a time period that contain presences.
+The ECOMON survey has varied in frequency over its duration. To correct for biases, we followed the common approach of grouping by large spatial polygons that represent different habitats, and analyzed the time series by month. Because of the low taxonomic resolution of gelatinous taxa and the bulk biomass quantification, we viewed measurements in a presence-absence context, tracking the percent of samples in a region and in a time period that contain presences.
+
+Regions
 
 ### Spatial modeling
 
