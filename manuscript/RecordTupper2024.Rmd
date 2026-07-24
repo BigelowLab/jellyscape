@@ -42,30 +42,26 @@ The Northeast Fisheries Science Center Ecosystem Monitoring (ECOMON) program col
 
 The ECOMON survey has varied in frequency over its duration. To correct for biases, we followed the common approach of grouping by large spatial polygons that represent different habitats, and analyzed the time series by month. Polygons include: Gulf of Maine, Georges Bank, New York Bight, and Mid Atlantic Bight [@walsh2015long]. Because of the low taxonomic resolution of gelatinous taxa and the bulk biomass quantification, we viewed measurements in a presence-absence context, tracking the proportion of samples in a region and in a time period that contain presences. For each month and within each region, we tested for statistically significant increases over time using a bivarite correlation test against year.
 
-### Spatial modeling
+### Spatial analysis
 
-To test for environmental associations with high or low occurrence of gelatinous taxa, we developed a species distribution model for each taxonomic group. We used environmental covariates from XYXYXcopernicus
+To test for environmental associations with high or low occurrence of gelatinous taxa across the study domain, we developed a species distribution model for each taxonomic group. We used physical covariates from the Global Ocean Physics Reanalysis (GLORYS) and biogeochemical covariates the Operational Mercator Ocean biogeochemical global ocean analysis (NEMO) obtained from the Copernicus repository (copernicus.eu), which provide daily temporal resolution and 1/12 and  quarter-degree resolution respectively. Physical covariates included: sea surface temperature, sea bottom temperature, sea surface salinity, mixed layer thickness, and surface velocity magnitude. Biogeochemical covariates included surface chlorophyll, surface net primary productivity, surface oxygen, surface nitrate, surface phosphate, and surface silicate. We also included day length and the time derivative of day length to represent seasonal dependencies, as well as bathymetric depth and bathymetric slope. 
 
-We used a boosted regression tree algorithm to fit the observations to environmental covariates. Boosted regression trees are well suited to variables that have sharp jumps or thresholds (Johnson et al. 2024), as is the case for the presence of gelatinous zooplankton, and is less prone to overfitting in species distribution models (Elith et al., 2008). We modeled each taxon using tidymodels workflows
-optimizing AUC?(Fielding and Bell, 1997)AUC
-was calculated using inbuilt tidymodels methods (Kuhn
-and Wickham, 2020)
-
-Hyperparameters.
-Cross validation
-Ensemble of runs used to quantify algorithmic uncertainty
-Response curves used to understand associations with environmental covariates
-
+We used a boosted regression tree algorithm to fit the observations to environmental covariates. Boosted regression trees are well suited to variables that have sharp jumps or thresholds (Johnson et al. 2024), as is the case for the presence of gelatinous zooplankton, and is less prone to overfitting in species distribution models (Elith et al., 2008). We modeled each taxon using tidymodels workflows, optimizing the inbuilt area-under-curve (AUC) metric (Fielding and Bell 1997, Kuhn and Wickham, 2020). We used a set of hyperparameters optimized in a previous study that used the same dataset and methodology (Johnson et al. 2024). We used a testing split of 25%, and ran an ensemble of 25 model runs to quantify algorithmic undertainty around the median output. Cross validation between environmental covariates was used in the interpretation of output, but not in covariate selection because the goal of the model was to explore covariate associations. The resulting response curves were used to understand associations with environmental covariates.
 
 ## Results
 
 ### Time series analysis
 
-Over almost five decades of measurements, there are consistent patterns of statistically significan increases in the presence of gelatinous taxa (Figure 2). While the survey does not cover every month in every year, there is enough coverage across seasons to see consistent patterns. Out of 144 month-region combinations, 56 (39%) indicate a statistically significant increase (p < 0.05) and zero (0%) indicate a statistically significant decrease. In the months August-November, 40 of the 48 time series (83%) show a statistically significan increase. In other words, in late summer and early fall, all taxa show an increase across the entire study region.
+Over almost five decades of measurements, there were consistent patterns of statistically significan increases in the recorded presence of gelatinous taxa (Figure 2). While the survey does not cover every month in every year, there is enough coverage across seasons to see consistent patterns. Out of 144 month-region combinations, 56 (39%) indicate a statistically significant increase (p < 0.05) and zero (0%) indicate a statistically significant decrease. In the months August-November, 40 of the 48 time series (83%) show a statistically significant increase. In other words, in late summer and early fall, all taxa show an increase across the entire study region.
 
 The results during other times of year were more mixed. On Georges Bank, there were statistically significant increases across the spring months for siphonophores and coelenterates. For the other taxa, regions, and months, there were some scattered increases but no strong pattern.
 
 ![Time series of the proportion of presences of the indicated taxon broken down by month and regional polygon. Stars indicate a statistically significant (p < 0.05) increase over the duration of the time series.](./figscripts/ECOMONjelly02.png)
+
+### Spatial analysis
+
+
+
 
 ## Discussion
 
