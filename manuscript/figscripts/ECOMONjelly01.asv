@@ -119,6 +119,7 @@ figure('position',[1           1        1131         867])
 for s=1:length(species)
     subplot(length(species),4,s*4-3)
     Z_GB = ECOMONpresence(species(s),GB,years,mons);
+    TS()
 
 
     ajpcolor(years,mons,Z_GB')
@@ -184,10 +185,7 @@ for s=1:length(species)
     %yyaxis('right')
     %set(gca,'ytick',[])
     
-    TS(:,1:4,s)=Z_GB(:,8:11);
-    TS(:,5:8,s)=Z_GOM(:,8:11);
-    TS(:,9:12,s)=Z_NY(:,8:11);
-    TS(:,13:16,s)=Z_MAB(:,8:11);
+
 end
 
 
@@ -196,19 +194,8 @@ set(h,'ytick',[0 1])
 set(h,'FontSize',10)
 
 
-figure('position',[1     1   610   548])
-lbls={'(A)','(B)','(C)'};
+figure
 for s=1:length(species)
     subplot(length(species),1,s)
-    plot(years,TS(:,:,s),'color',[.5 .5 .5])
-    hold on
-    plot(years,nanmean(TS(:,:,s),2),'linewidth',3,'color',[0 0 .5])
-    set(gca,'fontsize',16,'linewidth',3)
-    title(specnames(s),'fontsize',12)
-    if s==2
-        ylabel('Proportion presence')
-    end
-    axis([1975 2025 0 1])
-    set(gca,'ytick',[0 1])
-    text(1976.2,0.9,lbls(s))
+    Z_GB = ECOMONpresence(species(s),GB,years,mons);
 end
