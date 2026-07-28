@@ -3,9 +3,9 @@ title: "Support for the Jelly Ocean Hypothesis in the Northwest North Atlantic"
 author: "Nicholas R. Record, Benjamin Tupper, Omi Johnson"
 date: "null"
 output:
-  pdf_document: default
-  html_document: default
   word_document: default
+  html_document: default
+  pdf_document: default
 bibliography: bibliography.bib
 ---
 
@@ -63,16 +63,18 @@ The results during other times of year were more mixed. On Georges Bank, there w
 
 For the boosted regression tree distribution model, performance was genearally good across the three taxonomic groups. For coelenterates, the model had an AUC value of 0.79, an accuracy of 0.77, and an F-score of 0.49. For salps, the model had an AUC value of 0.93, an accuracy of 0.89, and an F-score of 0.72. For siphonophores, the model had an AUC value of 0.83, an accuracy of 0.77, and an F-score of 0.63. The model tended to favor specificity over sensitivity over all runs.
 
-A common threshold for covariate cross correlation is an r-squared value of 0.7 (REF). Only a few pairs of covariates met this threshold: bathymetric depth versus bathymetric slope (0.71), surface temperature versus surface oxygen (0.89), surface temperature versus day-length time derivative (0,79), surface chlorophyll and net primary productivity (0.81), and surface oxygen versus day-length time derivative (0.77). Because of the high correlation between sea surface temperature and surface oxygen, and the physical realtionship between the two (water temperature is related to oxyge content), we ran a second set of runs using subsurface oxygen. We used a depth of 50m, which limited the extent of the model domain. [results of these runs]
+A common threshold for covariate cross correlation is an r-squared value of 0.7 (REF). Only a few pairs of covariates met this threshold: bathymetric depth versus bathymetric slope (0.71), surface temperature versus surface oxygen (0.89), surface temperature versus day-length time derivative (0,79), surface chlorophyll and net primary productivity (0.81), and surface oxygen versus day-length time derivative (0.77). Because of the high correlation between sea surface temperature and surface oxygen, and the physical realtionship between the two (water temperature is related to oxyge content), we ran a second set of runs using subsurface oxygen. We used a depth of 100m, which limited the extent of the model domain. 
 
-![Model output... full version in supplement](./figscripts/salps-coel-siph_Jan-Apr-Jul-Oct_climatology.png)
+The three taxonomic groups had very distinct seasonal cycles (Figure 3). Salps were absent in the winter and spring, with a strong bloom in the autumn. The bloom was strongest in the Mid-Atlantic Bight, where nearly all samples contain salps, and extended northeast over Georges Bank, while presence remained generally low in the Gulf of Maine. Coelenterates were present year-round in most nearshore areas and generally absent over deeper waters, with a dip in the winter. Siphonophores had a more northerly range, with higher presence over deeper waters and a notably high presense over the continental slope in autumn.
+
+![Model output climatologies for the three taxa, showing January, April, July, and October (columns) for salps, coelenterates, and siphonophores (rows). The full climatology for each taxon is in the supplement (S2-S4).](./figscripts/salps-coel-siph_Jan-Apr-Jul-Oct_climatology.png)
 
 
 
 
 ## Discussion
 
-Large aggregations can appear suddenly and often inspire widespread public interest [@record2018jelly]. This has happened in the northeast US, prompting the same questions that underly the Jelly Ocean Hypothesis: Are jellyfish (gelata) increasing, and if so, what is the cause? For the region considered in this study, fifty years of measurements provides clear evidence that there is a widespread increase, focused particularly in the autumn months. In some places, and for some taxa, there has been a trend from gelata being rare in samples in the early years of the survey to occurring in nearly all of the samples in the later years of the survey.
+Large aggregations of gelata can appear suddenly and often inspire widespread public interest [@record2018jelly]. This has happened in the northeast US, prompting the same questions that underly the Jelly Ocean Hypothesis: Are jellyfish (gelata) increasing, and if so, what is the cause? For the region considered in this study, fifty years of measurements provides clear evidence that there is a widespread increase, focused particularly in the autumn months. In some places, and for some taxa, there has been a trend from gelata being rare in samples in the early years of the survey to occurring in nearly all of the samples in the later years of the survey.
 
 The question of cause is more complicated. The northeast US shelf has undergone notable oceanographic changes over the past fifty years, some of which are apparent in the gelata time series. There was a decadal shift among copepod species between the 1980s and the 1990s, driven by stratification [@pershing2024decadal], which appears in many of the gelata time series (Figure 2). In the Gulf of Maine in particular, a 1990s shift that ends in the early 2000s appears across taxa and is particularly pronounced for siphonophores (Figure S1). The region also underwent a decade of extremely rapid warming beginning around 2005, depending on how it is delineated [@pershing2015slow]. This period does not stand out in particular, except again among salps in the Gulf of Maine, and perhaps Georges Bank (Figure S1). Finally, the region has also undergone an abrupt shoft toward cold, fresh water beginning in autumn 2023 [@record2024early]. This is possibly reflected in the sharp drop in salp and siphonophore presence in fall of 2023, which don't appear to be driven by a sampling bias. Subsequent years of data will help clarify this possibility. Taken in total, the evidence suggests a relationship to the changing water masses of the region, but without finer taxonomic resolution, or size or life stage information, it is difficult to make more direct links.
 
@@ -82,6 +84,13 @@ The species distribution model can be interpreted as providing some evidence for
 ## Supplement
 
 ![Figure S1. Time series of the proportion of presences of the indicated taxon broken down by month and regional polygon. Stars indicate a statistically significant (p < 0.05) increase over the duration of the time series.](./figscripts/ECOMONjelly02S.png)
+
+![Figure S2. Model output climatology for salps.](./figscripts/salps_v1.02_monclim-NR.png)
+
+![Figure S3. Model output climatology for coelenterates.](./figscripts/coel_v1.02_monclim-NR.png)
+
+![Figure S4. Model output climatology for siphonophores](./figscripts/siph_v1.02_monclim-NR.png)
+
 
 ## References
 
