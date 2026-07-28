@@ -1,10 +1,11 @@
 ---
 title: "Support for the Jelly Ocean Hypothesis in the Northwest North Atlantic"
 author: "Nicholas R. Record, Benjamin Tupper, Omi Johnson"
-date: 
+date: "null"
 output:
   pdf_document: default
   html_document: default
+  word_document: default
 bibliography: bibliography.bib
 ---
 
@@ -64,7 +65,7 @@ For the boosted regression tree distribution model, performance was genearally g
 
 A common threshold for covariate cross correlation is an r-squared value of 0.7 (REF). Only a few pairs of covariates met this threshold: bathymetric depth versus bathymetric slope (0.71), surface temperature versus surface oxygen (0.89), surface temperature versus day-length time derivative (0,79), surface chlorophyll and net primary productivity (0.81), and surface oxygen versus day-length time derivative (0.77). Because of the high correlation between sea surface temperature and surface oxygen, and the physical realtionship between the two (water temperature is related to oxyge content), we ran a second set of runs using subsurface oxygen. We used a depth of 50m, which limited the extent of the model domain. [results of these runs]
 
-
+![Model output... full version in supplement](./figscripts/salps-coel-siph_Jan-Apr-Jul-Oct_climatology.png)
 
 
 
