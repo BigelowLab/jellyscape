@@ -3,9 +3,9 @@ title: "Support for the Jelly Ocean Hypothesis in the Northwest North Atlantic"
 author: "Nicholas R. Record, Benjamin Tupper, Omi Johnson"
 date: "null"
 output:
-  word_document: default
-  html_document: default
   pdf_document: default
+  html_document: default
+  word_document: default
 bibliography: bibliography.bib
 ---
 
@@ -80,6 +80,7 @@ The question of cause is more complicated. The northeast US shelf has undergone 
 
 The species distribution model can be interpreted as providing some evidence for associations with changing environmental variables. In addition to the generally positive response to increasing temperature, the positive response to decreasing oxygen is also notable. [need to be careful here...subsurface]
 
+\newpage
 
 ## Supplement
 
@@ -90,6 +91,8 @@ The species distribution model can be interpreted as providing some evidence for
 ![Figure S3. Model output climatology for coelenterates.](./figscripts/coel_v1.02_monclim-NR.png)
 
 ![Figure S4. Model output climatology for siphonophores](./figscripts/siph_v1.02_monclim-NR.png)
+
+\newpage
 
 
 ## References
