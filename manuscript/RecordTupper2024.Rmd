@@ -1,5 +1,5 @@
 ---
-title: "Support for the Jelly Ocean Hypothesis in the Northwest North Atlantic"
+title: "Evidence for the Jelly Ocean Hypothesis in the Northwest North Atlantic"
 author: "Nicholas R. Record, Benjamin Tupper, Omi Johnson"
 date: "null"
 output:
