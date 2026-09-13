@@ -88,12 +88,19 @@ textm(35,-65,' 35°N','fontsize',20)
 textm(45,-65,' 45°N','fontsize',20)
 
 I=find(inpolygon(ECOMON(:,3),ECOMON(:,2),GB(:,1),GB(:,2)));
+disp(['GB ',num2str(length(I))])
 plotm(ECOMON(I,2),ECOMON(I,3),'.','color',[.3 .3 .3]);
+
 I=find(inpolygon(ECOMON(:,3),ECOMON(:,2),GOM(:,1),GOM(:,2)));
+disp(['GOM ',num2str(length(I))])
 plotm(ECOMON(I,2),ECOMON(I,3),'.','color',[.3 .3 .6]);
+
 I=find(inpolygon(ECOMON(:,3),ECOMON(:,2),NY(:,1),NY(:,2)));
+disp(['NY ',num2str(length(I))])
 plotm(ECOMON(I,2),ECOMON(I,3),'.','color',[.3 .6 .3]);
+
 I=find(inpolygon(ECOMON(:,3),ECOMON(:,2),MAB(:,1),MAB(:,2)));
+disp(['MAB ',num2str(length(I))])
 plotm(ECOMON(I,2),ECOMON(I,3),'.','color',[.6 .3 .3]);
 
 % alph=.1;
