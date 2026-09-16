@@ -1,0 +1,17 @@
+﻿Variable,Name
+chl_sur,Surface chlorophyll (mg m-3)
+day_length,Day length (h)
+ddx_day_length,Day length change (h day-1)
+deptho,Depth (m)
+mlotst_mld,Mixed layer thickness (m)
+no3_sur,Surface NO3 (mmol m-3)
+nppv_sur,Surface net primary productivity (mg m-3 day-1)
+o2_sur,Surface O2 (mmol m-3)
+po4_sur,Surface PO4 (mmol m-3)
+sal_sur,Surface salinity (psu)
+si_sur,Surface Si (mmol m-3)
+slope,Seabed slope
+temp_bot,Bottom temperature (°C)
+temp_sur,Surface temperature (°C)
+vel_sur,Surface velocity (m s-1)
+zos_zos,Surface height (m)
